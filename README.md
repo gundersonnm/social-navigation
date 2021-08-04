@@ -2,6 +2,7 @@
 A life-long learning framework to enable the safe operation of a mobile robot in human-populated, dynamic environments.
 
 SETUP INSTRUCTIONS:
+
 RoboSim1 - RoboSim5:
  1) Open your preferred code editor (Atom, Vim, BlueJ, etc.) to run the code. 
  2) In terminal, install pygame.
