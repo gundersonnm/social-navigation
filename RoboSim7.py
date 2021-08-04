@@ -101,7 +101,7 @@ while o < 20:
             point2 = [0.5, 1.0]
             x_values = [point1[0], point2[0]]
             y_values = [point1[1], point2[1]]
-            plt.plot(x_values, y_values, 'blue')
+            plt.plot(x_values, y_values, '#76EE00')
             checkcheck = True
             break
         l = l + 1
@@ -235,14 +235,20 @@ while o < 20:
     ycoord = finalfinalyArray[-1]
     pastCurrentNodeX = currentNodeX
     pastCurrentNodeY = currentNodeY
-    np.append(xcoord, currentNodeX)
-    np.append(ycoord, currentNodeY)
-    x_values2 = [xcoord]
-    y_values2 = [ycoord]
-    plt.plot(x_values2, y_values2)
+    point3 = [pastCurrentNodeX, pastCurrentNodeY]
+    point4 = [xcoord, ycoord]
+    x_values3 = [point3[0], point4[0]]
+    y_values3 = [point3[1], point4[1]]
+    plt.plot(x_values3, y_values3, '#76EE00')
     currentNodeX = xcoord
     currentNodeY = ycoord
 
+
+    #point1 = [currentNodeX, currentNodeY]
+    #point2 = [0.5, 1.0]
+    #x_values = [point1[0], point2[0]]
+    #y_values = [point1[1], point2[1]]
+    #plt.plot(x_values, y_values, 'blue')
     o = o + 1
 plt.scatter(nodex, nodey, c = colors)
 start = plt.plot(0.5,0,'go')
