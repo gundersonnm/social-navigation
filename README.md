@@ -1,6 +1,18 @@
 # social-navigation
 A life-long learning framework to enable the safe operation of a mobile robot in human-populated, dynamic environments.
 
+SETUP INSTRUCTIONS:
+RoboSim1 - RoboSim5:
+ 1) Open your preferred code editor (Atom, Vim, BlueJ, etc.) to run the code. 
+ 2) In terminal, install pygame.
+
+RoboSim6 - RoboSim7:
+ 1) Open your preferred code editor (Atom, Vim, BlueJ, etc.) to run the code.
+ 2) In terminal, install shapely.
+
+
+ALGORITHM FRAMEWORK:
+
 STEP 1: Environment Initialization
 - Set initial and final coordinate for robot and final destination
 - ‘Draw’ direct, straight line from start to end point coordinates
