@@ -7,7 +7,7 @@ RoboSim1 - RoboSim5:
  1) Open your preferred code editor (Atom, Vim, BlueJ, etc.) to run the code. 
  2) In terminal, install pygame.
 
-RoboSim6 - RoboSim7:
+RoboSim6 - RoboSim8:
  1) Open your preferred code editor (Atom, Vim, BlueJ, etc.) to run the code.
  2) In terminal, install shapely.
 
