@@ -81,3 +81,35 @@ if doIntersect(p1, q1, p2, q2):
     print("Yes")
 else:
     print("No")
+
+p1 = Point(10, 0)
+q1 = Point(0, 10)
+p2 = Point(0, 0)
+q2 = Point(10,10)
+
+if doIntersect(p1, q1, p2, q2):
+    print("Yes")
+else:
+    print("No")
+
+p1 = Point(-5,-5)
+q1 = Point(0, 0)
+p2 = Point(1, 1)
+q2 = Point(10, 10)
+
+if doIntersect(p1, q1, p2, q2):
+    print("Yes")
+else:
+    print("No")
+
+p1 = Point(-5,-5)
+q1 = Point(0, 0)
+p2 = Point(1, 1)
+q2 = Point(10, 10)
+
+if doIntersect(p1, q1, p2, q2):
+    print("Yes")
+else:
+    print("No")
+
+# This code is contributed by Ansh Riyal
