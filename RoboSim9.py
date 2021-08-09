@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import LineString
 
+# Assigns RGB color values
 white = (255, 255, 255)
 yellow = (255, 255, 102)
 black = (0, 0, 0)
@@ -14,12 +15,14 @@ green = (0, 255, 0)
 blue = (50, 153, 213)
 gray = (131, 139, 139)
 
+# Creation of nodes
 N = 100
 
 nodex = np.random.rand(N)
 nodey = np.random.rand(N)
 colors = (0,0,0)
 
+# Define empty arrays for creation of obstacles
 xArray = []
 yArray = []
 xminArray = []
@@ -27,6 +30,7 @@ yminArray = []
 xmaxArray = []
 ymaxArray = []
 
+# Creation of obstacles
 fig = plt.figure()
 ax = fig.add_subplot(111, aspect='equal')
 plt.xlim([0, 1.05])
@@ -47,6 +51,7 @@ for i in range(0,n):
     xmaxArray = np.append(xmaxArray, xmax)
     ymaxArray = np.append(ymaxArray, ymax)
 
+# Define arbitrary iterators and empty arrays
 nodeDistArray = []
 nodexArray = []
 nodeyArray = []
@@ -61,6 +66,7 @@ o = 0
 pastCurrentNodeX = 0
 pastCurrentNodeY = 0
 
+# Adding the current node and final node to x and y arrays
 nodexArray = np.append(nodex, currentNodeX)
 nodeyArray = np.append(nodey, currentNodeY)
 
@@ -69,14 +75,17 @@ nodeyArray = np.append(nodeyArray, 1)
 
 check1 = False
 
+# Looping through multiple iterations of nodes to reach the final node
 while o < 20:
 
+    # Checking if its reached the final node
     if np.logical_and(currentNodeX == 0.5, currentNodeY == 1.0).any():
         check1 = True
 
     if check1 == True:
         break
 
+    # Building arrays filled with distances from current nodes to nodes aroundd it
     nodexArray1 = []
     nodeyArray1 = []
     nodeDistArray = []
@@ -88,8 +97,6 @@ while o < 20:
 
             nodexArray1 = np.append(nodexArray1, nodexArray[x])
             nodeyArray1 = np.append(nodeyArray1, nodeyArray[x])
-            #newx = nodexArray1[p]
-            #newy = nodeyArray1[p]
             nodeDistArray.append(math.sqrt((nodexArray1[p] - currentNodeX)**2 + (nodeyArray1[p] - currentNodeY)**2))
 
             allValuesArray = zip(nodeDistArray, nodexArray1, nodeyArray1)
@@ -100,6 +107,7 @@ while o < 20:
             p = p + 1
         x = x + 1
 
+    # Building arrays with the closest 10 nodes to current node
     minxArray = []
     minyArray = []
     minDisArray = []
@@ -121,8 +129,6 @@ while o < 20:
     checkcheck = False
     for kk in minxArray:
         if np.logical_and(kk == 0.5, minyArray[l] == 1.0).any():
-            #currentNodeX = kk
-            #currentNodeY = minyArray[l]
             point1 = [currentNodeX, currentNodeY]
             point2 = [0.5, 1.0]
             x_values = [point1[0], point2[0]]
@@ -135,6 +141,7 @@ while o < 20:
     if checkcheck == True:
         break
 
+    # Define arbitrary variable values
     r = 0
     minxArrayint = 0
     minyArrayint = 0
@@ -174,19 +181,15 @@ while o < 20:
 
         r = r + 1
 
+    print(minxArray)
+    print(minyArray)
 
+    # Obstacle disqualifier!
+    # Checking intersections between nodes and obstacles
     class Point:
         def __init__(self, x, y):
             self.x = x
             self.y = y
-
-    # Given three colinear points p, q, r, the function checks if
-    # point q lies on line segment 'pr'
-    #def onSegment(p, q, r):
-    #    if ( (q.x <= max(p.x, r.x)) and (q.x >= min(p.x, r.x)) and
-    #           (q.y <= max(p.y, r.y)) and (q.y >= min(p.y, r.y))):
-    #        return True
-    #    return False
 
     def orientation(p, q, r):
         # to find the orientation of an ordered triplet (p,q,r)
@@ -194,9 +197,6 @@ while o < 20:
         # 0 : Colinear points
         # 1 : Clockwise points
         # 2 : Counterclockwise
-
-        # See https://www.geeksforgeeks.org/orientation-3-ordered-points/amp/
-        # for details of below formula.
 
         val = (float(q.y - p.y) * (r.x - q.x)) - (float(q.x - p.x) * (r.y - q.y))
         if (val > 0):
@@ -248,7 +248,10 @@ while o < 20:
         # If none of the cases
         return False
 
+    # Testing each side of the obstacles against the lines from the current node to each possible node
     for angles in minxArray:
+
+        # Define arbitrary variables and arrays with checkers
         h = 0
         minxArray4 = []
         minyArray4 = []
@@ -312,7 +315,11 @@ while o < 20:
 
             h = h + 1
 
+    print(minxArray)
+    print(minyArray)
 
+    # Behind disqualifier!
+    # Define arbitrary variables for 'behind' disqualification
     finalBehindIterator = 0
     j = 0
     finalAngleArray1 = []
@@ -322,15 +329,13 @@ while o < 20:
     minxArray2 = 0
     angleIterator = 0
     checker2 = 0
+
     # check to see if node is behind start point, disqualify node if it is.
     for nums1 in minyArray4:
         if nums1 > currentNodeY:
             finalxArray = np.append(finalxArray, minxArray4[finalBehindIterator])
             finalyArray = np.append(finalyArray, minyArray4[finalBehindIterator])
             finalAngleArray1 = np.append(finalAngleArray1, angleArray2[finalBehindIterator])
-            #finalAngleArray1.append(angleArray[finalBehindIterator])
-            #finalxArray.append(minxArray[finalBehindIterator])
-            #finalyArray.append(minyArray[finalBehindIterator])
             checker2 = checker2 + 1
         finalBehindIterator = finalBehindIterator + 1
         continue
@@ -344,6 +349,7 @@ while o < 20:
     finalyArray1 = []
     checker3 = 0
 
+    # Angle disqualifier!
     # check to see if angle between start to finish line to node is larger than 45 degrees
     # disqualify node if it is.
     for angles in finalAngleArray1:
@@ -392,7 +398,8 @@ while o < 20:
         finalfinalxArray = np.append(finalfinalxArray, finalxArray1[0])
         finalfinalyArray = np.append(finalfinalyArray, finalyArray1[0])
 
-
+    # choose the last element in the x and y coordinates to draw a green line
+    # line goes from start point to next
     xcoord = finalfinalxArray[-1]
     ycoord = finalfinalyArray[-1]
     pastCurrentNodeX = currentNodeX
@@ -407,8 +414,7 @@ while o < 20:
 
     o = o + 1
 
-
-
+# Plotting nodes and the start and end nodes
 plt.scatter(nodex, nodey, c = colors)
 start = plt.plot(0.5,0,'go')
 end = plt.plot(0.5,1,'ro')
