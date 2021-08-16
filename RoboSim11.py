@@ -16,7 +16,7 @@ blue = (50, 153, 213)
 gray = (131, 139, 139)
 
 # Creation of nodes
-N = 300
+N = 400
 
 nodex = np.random.rand(N)
 nodey = np.random.rand(N)
@@ -40,10 +40,10 @@ for i in range(0,n):
     x = random.uniform(0, 1)
     y = random.uniform(0, 1)
     ax.add_patch(matplotlib.patches.Rectangle((x, y),0.1,0.1,))
-    xmin = x - 0.05
-    ymin = y - 0.05
-    xmax = x + 0.05
-    ymax = y + 0.05
+    xmin = x
+    ymin = y
+    xmax = x + 0.1
+    ymax = y + 0.1
     xArray = np.append(xArray, x)
     yArray = np.append(yArray, y)
     xminArray = np.append(xminArray, xmin)
@@ -65,6 +65,8 @@ nodeyArray1 = []
 o = 0
 pastCurrentNodeX = 0
 pastCurrentNodeY = 0
+pastCurrentNodeXArray = []
+pastCurrentNodeYArray = []
 
 # Adding the current node and final node to x and y arrays
 nodexArray = np.append(nodex, currentNodeX)
@@ -85,7 +87,7 @@ while o < 40:
     if check1 == True:
         break
 
-    # Building arrays filled with distances from current nodes to nodes aroundd it
+    # Building arrays filled with distances from current nodes to nodes around it
     nodexArray1 = []
     nodeyArray1 = []
     nodeDistArray = []
@@ -193,45 +195,57 @@ while o < 40:
         p3 = dy0*(s0[1][0]-s1[1][0]) - dx0*(s0[1][1]-s1[1][1])
         return (p0*p1<=0) & (p2*p3<=0)
 
-
     n = 0
-    b = 0
-    intersectCounter = 0
     minxArray4 = []
     minyArray4 = []
     angleArray2 = []
 
-    while b < 10:
+    print(minxArray)
 
-        while n < 10:
+    while n < 10:
+        b = 0
+        while b < 10:
+            intersectCounter = 0
             nodePath = [(currentNodeX, currentNodeY), (minxArray[n], minyArray[n])]
             side1 = [(xminArray[b], yminArray[b]), (xmaxArray[b], yminArray[b])]
             side2 = [(xminArray[b], yminArray[b]), (xminArray[b], ymaxArray[b])]
             side3 = [(xminArray[b], ymaxArray[b]), (xmaxArray[b], ymaxArray[b])]
             side4 = [(xmaxArray[b], ymaxArray[b]), (xmaxArray[b], yminArray[b])]
 
-            if intersects(nodePath, side1) == True:
+            if intersects(nodePath, side1):
                 intersectCounter = intersectCounter + 1
+                print("Yes1")
+                print(intersectCounter)
+                print(nodePath)
 
-            if intersects(nodePath, side2) == True:
+            if intersects(nodePath, side2):
                 intersectCounter = intersectCounter + 1
+                print("Yes2")
+                print(intersectCounter)
+                print(nodePath)
 
-            if intersects(nodePath, side3) == True:
+            if intersects(nodePath, side3):
                 intersectCounter = intersectCounter + 1
+                print("Yes3")
+                print(intersectCounter)
+                print(nodePath)
 
-            if intersects(nodePath, side4) == True:
+            if intersects(nodePath, side4):
                 intersectCounter = intersectCounter + 1
+                print("Yes4")
+                print(intersectCounter)
+                print(nodePath)
 
-            if intersectCounter== 0:
-                minxArray4 = np.append(minxArray4, minxArray[n])
-                minyArray4 = np.append(minyArray4, minyArray[n])
-                angleArray2 = np.append(angleArray2, angleArray[n])
+            b = b + 1
 
-            n = n + 1
+        if intersectCounter == 0:
+            minxArray4 = np.append(minxArray4, minxArray[n])
+            minyArray4 = np.append(minyArray4, minyArray[n])
+            angleArray2 = np.append(angleArray2, angleArray[n])
 
-        b = b + 1
+        n = n + 1
 
-
+    print(minxArray4)
 
     finalBehindIterator = 0
     j = 0
@@ -275,15 +289,25 @@ while o < 40:
             checker3 = checker3 + 1
         finalAngleIterator = finalAngleIterator + 1
 
-    if checker3 == 0 or checker2 == 0:
-        if pastCurrentNodeX == minxArray[0] and pastCurrentNodeY == minyArray[0]:
-            totalFinalAngleArray = np.append(totalFinalAngleArray, angleArray[1])
-            finalxArray1 = np.append(finalxArray1, minxArray[1])
-            finalyArray1 = np.append(finalyArray1, minyArray[1])
-        else:
-            totalFinalAngleArray = np.append(totalFinalAngleArray, angleArray[0])
-            finalxArray1 = np.append(finalxArray, minxArray[0])
-            finalyArray1 = np.append(finalyArray, minyArray[0])
+    if np.logical_and(checker2 != 0, checker3 == 0).any():
+        totalFinalAngleArray = np.append(totalFinalAngleArray, finalxArray[0])
+        finalxArray1 = np.append(finalxArray1, finalxArray[0])
+        finalyArray1 = np.append(finalyArray1, finalyArray[0])
+
+    if np.logical_and(checker2 == 0, checker3 == 0).any():
+        finalAngleArray1 = np.append(totalFinalAngleArray, angleArray2[0])
+        finalxArray = np.append(finalxArray1, minxArray4[0])
+        finalyArray = np.append(finalyArray1, minyArray4[0])
+
+#    if checker3 == 0 or checker2 == 0:
+#        if pastCurrentNodeX == minxArray[0] and pastCurrentNodeY == minyArray[0]:
+#            totalFinalAngleArray = np.append(totalFinalAngleArray, angleArray[1])
+#            finalxArray1 = np.append(finalxArray1, minxArray[1])
+#            finalyArray1 = np.append(finalyArray1, minyArray[1])
+#        else:
+#            totalFinalAngleArray = np.append(totalFinalAngleArray, angleArray[0])
+#            finalxArray1 = np.append(finalxArray, minxArray[0])
+#            finalyArray1 = np.append(finalyArray, minyArray[0])
 
     # define arbitrary variables for final chosen node desicion making
     finalDistanceIterator = 0
@@ -329,8 +353,20 @@ while o < 40:
     ax.plot(x_values3, y_values3, '#76EE00')
     currentNodeX = xcoord
     currentNodeY = ycoord
+    pastCurrentNodeXArray = np.append(pastCurrentNodeXArray, pastCurrentNodeX)
+    pastCurrentNodeYArray = np.append(pastCurrentNodeYArray, pastCurrentNodeY)
 
     o = o + 1
+#q = 0
+#for color in pastCurrentNodeXArray:
+#    point5 = [pastCurrentNodeXArray[q], pastCurrentNodeYArray[q]]
+#    point6 = [pastCurrentNodeXArray[q+1], pastCurrentNodeYArray[q+1]]
+#    x_values4 = [point5[0], point6[0]]
+#    y_values4 = [point5[1], point6[1]]
+#    ax.plot(x_values4, y_values4, '#76EE00')
+#    q = q + 1
+
+
 
 # Plotting nodes and the start and end nodes
 plt.scatter(nodex, nodey, c = colors)
