@@ -97,16 +97,18 @@ while o < 40:
 
         if np.logical_and(nodexArray[x] != currentNodeX, nodeyArray[x] != currentNodeY).any():
 
-            nodexArray1 = np.append(nodexArray1, nodexArray[x])
-            nodeyArray1 = np.append(nodeyArray1, nodeyArray[x])
-            nodeDistArray.append(math.sqrt((nodexArray1[p] - currentNodeX)**2 + (nodeyArray1[p] - currentNodeY)**2))
+            if np.logical_and(nodexArray[x] != pastCurrentNodeX, nodeyArray[x] != pastCurrentNodeY).any():
 
-            allValuesArray = zip(nodeDistArray, nodexArray1, nodeyArray1)
-            allValuesArray = list(allValuesArray)
+                nodexArray1 = np.append(nodexArray1, nodexArray[x])
+                nodeyArray1 = np.append(nodeyArray1, nodeyArray[x])
+                nodeDistArray.append(math.sqrt((nodexArray1[p] - currentNodeX)**2 + (nodeyArray1[p] - currentNodeY)**2))
 
-            allValuesArray.sort()
+                allValuesArray = zip(nodeDistArray, nodexArray1, nodeyArray1)
+                allValuesArray = list(allValuesArray)
 
-            p = p + 1
+                allValuesArray.sort()
+
+                p = p + 1
         x = x + 1
 
     # Building arrays with the closest 10 nodes to current node
@@ -200,8 +202,6 @@ while o < 40:
     minyArray4 = []
     angleArray2 = []
 
-    print(minxArray)
-
     while n < 10:
         b = 0
         intersectCounter = 0
@@ -215,38 +215,24 @@ while o < 40:
 
             if intersects(nodePath, side1):
                 intersectCounter = intersectCounter + 1
-                print("Yes1")
-                print(intersectCounter)
-                print(nodePath)
 
             if intersects(nodePath, side2):
                 intersectCounter = intersectCounter + 1
-                print("Yes2")
-                print(intersectCounter)
-                print(nodePath)
 
             if intersects(nodePath, side3):
                 intersectCounter = intersectCounter + 1
-                print("Yes3")
-                print(intersectCounter)
-                print(nodePath)
 
             if intersects(nodePath, side4):
                 intersectCounter = intersectCounter + 1
-                print("Yes4")
-                print(intersectCounter)
-                print(nodePath)
+
 
             b = b + 1
-        print(intersectCounter)
         if intersectCounter == 0:
             minxArray4 = np.append(minxArray4, minxArray[n])
             minyArray4 = np.append(minyArray4, minyArray[n])
             angleArray2 = np.append(angleArray2, angleArray[n])
 
         n = n + 1
-
-    print(minxArray4)
 
     finalBehindIterator = 0
     j = 0
@@ -297,8 +283,8 @@ while o < 40:
 
     if np.logical_and(checker2 == 0, checker3 == 0).any():
         finalAngleArray1 = np.append(totalFinalAngleArray, angleArray2[0])
-        finalxArray = np.append(finalxArray1, minxArray4[0])
-        finalyArray = np.append(finalyArray1, minyArray4[0])
+        finalxArray1 = np.append(finalxArray1, minxArray4[0])
+        finalyArray1 = np.append(finalyArray1, minyArray4[0])
 
 #    if checker3 == 0 or checker2 == 0:
 #        if pastCurrentNodeX == minxArray[0] and pastCurrentNodeY == minyArray[0]:
