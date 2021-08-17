@@ -204,8 +204,9 @@ while o < 40:
 
     while n < 10:
         b = 0
+        intersectCounter = 0
+
         while b < 10:
-            intersectCounter = 0
             nodePath = [(currentNodeX, currentNodeY), (minxArray[n], minyArray[n])]
             side1 = [(xminArray[b], yminArray[b]), (xmaxArray[b], yminArray[b])]
             side2 = [(xminArray[b], yminArray[b]), (xminArray[b], ymaxArray[b])]
@@ -237,7 +238,7 @@ while o < 40:
                 print(nodePath)
 
             b = b + 1
-
+        print(intersectCounter)
         if intersectCounter == 0:
             minxArray4 = np.append(minxArray4, minxArray[n])
             minyArray4 = np.append(minyArray4, minyArray[n])
