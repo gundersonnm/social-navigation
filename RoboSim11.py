@@ -77,6 +77,8 @@ nodeyArray = np.append(nodeyArray, 1)
 
 check1 = False
 
+c = 0
+
 # Looping through multiple iterations of nodes to reach the final node
 while o < 40:
 
@@ -97,8 +99,7 @@ while o < 40:
 
         if np.logical_and(nodexArray[x] != currentNodeX, nodeyArray[x] != currentNodeY).any():
 
-            if np.logical_and(nodexArray[x] != pastCurrentNodeX, nodeyArray[x] != pastCurrentNodeY).any():
-
+            if o == 0:
                 nodexArray1 = np.append(nodexArray1, nodexArray[x])
                 nodeyArray1 = np.append(nodeyArray1, nodeyArray[x])
                 nodeDistArray.append(math.sqrt((nodexArray1[p] - currentNodeX)**2 + (nodeyArray1[p] - currentNodeY)**2))
@@ -109,6 +110,23 @@ while o < 40:
                 allValuesArray.sort()
 
                 p = p + 1
+
+            if o != 0:
+                if np.logical_and(nodexArray[x] != pastCurrentNodeX, nodeyArray[x] != pastCurrentNodeY).any():
+
+                    if np.logical_and(nodexArray[x] != pastCurrentNodeXArray[o-2], nodeyArray[x] != pastCurrentNodeYArray[o-2]).any():
+
+                        nodexArray1 = np.append(nodexArray1, nodexArray[x])
+                        nodeyArray1 = np.append(nodeyArray1, nodeyArray[x])
+                        nodeDistArray.append(math.sqrt((nodexArray1[p] - currentNodeX)**2 + (nodeyArray1[p] - currentNodeY)**2))
+
+                        allValuesArray = zip(nodeDistArray, nodexArray1, nodeyArray1)
+                        allValuesArray = list(allValuesArray)
+
+                        allValuesArray.sort()
+
+                        p = p + 1
+
         x = x + 1
 
     # Building arrays with the closest 10 nodes to current node
@@ -344,6 +362,7 @@ while o < 40:
     pastCurrentNodeYArray = np.append(pastCurrentNodeYArray, pastCurrentNodeY)
 
     o = o + 1
+    c = c + 1
 
 q = 1
 while q < o:
