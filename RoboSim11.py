@@ -358,14 +358,15 @@ while o < 40:
     pastCurrentNodeYArray = np.append(pastCurrentNodeYArray, pastCurrentNodeY)
 
     o = o + 1
-#q = 0
-#for color in pastCurrentNodeXArray:
-#    point5 = [pastCurrentNodeXArray[q], pastCurrentNodeYArray[q]]
-#    point6 = [pastCurrentNodeXArray[q+1], pastCurrentNodeYArray[q+1]]
-#    x_values4 = [point5[0], point6[0]]
-#    y_values4 = [point5[1], point6[1]]
-#    ax.plot(x_values4, y_values4, '#76EE00')
-#    q = q + 1
+
+q = 1
+while q < o:
+    point5 = [pastCurrentNodeXArray[q-1], pastCurrentNodeYArray[q-1]]
+    point6 = [pastCurrentNodeXArray[q], pastCurrentNodeYArray[q]]
+    x_values4 = [point5[0], point6[0]]
+    y_values4 = [point5[1], point6[1]]
+    ax.plot(x_values4, y_values4, '#76EE00')
+    q = q + 1
 
 
 
