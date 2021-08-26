@@ -1,10 +1,13 @@
-import math
+enable thimport math
 import random
 
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import LineString
+import time
+
+start_time = time.time()
 
 # Assigns RGB color values
 white = (255, 255, 255)
@@ -16,7 +19,7 @@ blue = (50, 153, 213)
 gray = (131, 139, 139)
 
 # Creation of nodes
-N = 400
+N = 200
 
 nodex = np.random.rand(N)
 nodey = np.random.rand(N)
@@ -304,6 +307,16 @@ while o < 40:
         finalxArray1 = np.append(finalxArray1, minxArray4[0])
         finalyArray1 = np.append(finalyArray1, minyArray4[0])
 
+#    if checker3 == 0 or checker2 == 0:
+#        if pastCurrentNodeX == minxArray[0] and pastCurrentNodeY == minyArray[0]:
+#            totalFinalAngleArray = np.append(totalFinalAngleArray, angleArray[1])
+#            finalxArray1 = np.append(finalxArray1, minxArray[1])
+#            finalyArray1 = np.append(finalyArray1, minyArray[1])
+#        else:
+#            totalFinalAngleArray = np.append(totalFinalAngleArray, angleArray[0])
+#            finalxArray1 = np.append(finalxArray, minxArray[0])
+#            finalyArray1 = np.append(finalyArray, minyArray[0])
+
     # define arbitrary variables for final chosen node desicion making
     finalDistanceIterator = 0
     b = 0
@@ -371,3 +384,4 @@ start = plt.plot(0.5,0,'go')
 end = plt.plot(0.5,1,'ro')
 plt.show()
 
+print("My program took", time.time() - start_time, "to run")
