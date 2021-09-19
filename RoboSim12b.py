@@ -9,7 +9,7 @@ import time
 
 start_time = time.time()
 
-# Assigns RGB color values
+# Assigns RGB color values to be used in simulation
 white = (255, 255, 255)
 yellow = (255, 255, 102)
 black = (0, 0, 0)
@@ -17,16 +17,16 @@ red = (213, 50, 80)
 green = (0, 255, 0)
 blue = (50, 153, 213)
 gray = (131, 139, 139)
+colors = (0,0,0)
 
 # Creation of nodes
-#N = 100
-
 gridX, gridY = np.mgrid[0:11, 0:11]
 
-
+# Define empty arrays to hold the x and y coordinate values of each node
 nodex = []
 nodey = []
 
+# Fill empty arrays with x and y coordinate values of each node
 for nodes in gridX:
     nodex.append(nodes)
     nodex.append(nodes + 0.5)
@@ -34,11 +34,6 @@ for nodes in gridX:
 for nodes1 in gridY:
     nodey.append(nodes1)
     nodey.append(nodes1 + 0.5)
-
-
-#nodex = gridX
-#nodey = gridY
-colors = (0,0,0)
 
 # Define empty arrays for creation of obstacles
 xArray = []
@@ -48,7 +43,7 @@ yminArray = []
 xmaxArray = []
 ymaxArray = []
 
-# Creation of obstacles
+# Creation of obstacles, and adding their coordinate values to xmin, ymin, xmax, and ymax Arrays. We use these values to calculate intersection points.
 fig = plt.figure()
 ax = fig.add_subplot(111, aspect='equal')
 plt.xlim([0, 10.05])
@@ -69,7 +64,7 @@ for i in range(0,n):
     xmaxArray = np.append(xmaxArray, xmax)
     ymaxArray = np.append(ymaxArray, ymax)
 
-# Define arbitrary iterators and empty arrays
+# Define arbitrary iterators and empty arrays to hold the values of the 10 closest nodes to the CurrentNode
 nodeDistArray = []
 nodexArray = []
 nodeyArray = []
@@ -78,15 +73,13 @@ minxArray = []
 minyArray = []
 currentNodeX = 5
 currentNodeY = 0
-#nodexArray1 = []
-#nodeyArray1 = []
 o = 0
 pastCurrentNodeX = 0
 pastCurrentNodeY = 0
 pastCurrentNodeXArray = []
 pastCurrentNodeYArray = []
 
-# Adding the current node and final node to x and y arrays
+# Adding the initial node and final node to x and y arrays
 nodexArray = np.append(nodex, currentNodeX)
 nodeyArray = np.append(nodey, currentNodeY)
 
@@ -96,27 +89,27 @@ check1 = False
 
 c = 0
 
-# Looping through multiple iterations of nodes to reach the final node
+# Loop encapsuling ALL path planning code. It will repeat until it either reaches the final node or has iterated 40 times (a failsafe for the code getting stuck somewhere).
 while o < 40:
 
-    # Checking if its reached the final node
+    # This checks if the path planner has reached the final node, and if it has, breaks the all encapsuling loop.
     if np.logical_and(currentNodeX == 5, currentNodeY == 10).any():
         check1 = True
 
     if check1 == True:
         break
 
-    # Building arrays filled with distances from current nodes to nodes around it
+    # Initialises arrays and fills them with the x values, y values, and distance values of all 100 nodes from the current node.
     nodeDistArray = []
     p = 0
     x = 0
-    for jj in nodexArray:
+
+    # Minimum values will only be added to the arrays if and only if the nodes are not current node X or Y, or any past current nodes.
+    for values in nodexArray:
 
         if np.logical_and(nodexArray[x] != currentNodeX, nodeyArray[x] != currentNodeY).any():
 
             if o == 0:
-                #nodexArray1 = np.append(nodexArray1, nodexArray[x])
-                #nodeyArray1 = np.append(nodeyArray1, nodeyArray[x])
                 nodeDistArray.append(math.sqrt((nodexArray[p] - currentNodeX)**2 + (nodeyArray[p] - currentNodeY)**2))
 
                 allValuesArray = zip(nodeDistArray, nodexArray, nodeyArray)
@@ -132,9 +125,6 @@ while o < 40:
 
                     if np.logical_and(nodexArray[x] != pastCurrentNodeXArray[o-2], nodeyArray[x] != pastCurrentNodeYArray[o-2]).any():
 
-                        #nodexArray1 = np.append(nodexArray1, nodexArray[x])
-                        #nodeyArray1 = np.append(nodeyArray1, nodeyArray[x])
-
                         nodeDistArray.append(math.sqrt((nodexArray[p] - (currentNodeX))**2 + (nodeyArray[p] - currentNodeY)**2))
                         allValuesArray = zip(nodeDistArray, nodexArray, nodeyArray)
                         allValuesArray = list(allValuesArray)
@@ -145,25 +135,29 @@ while o < 40:
 
         x = x + 1
 
-
     # Building arrays with the closest 10 nodes to current node
     minxArray = []
     minyArray = []
     minDisArray = []
 
+    # adding the distances of the nodes with the 10 smallest distances to new arrays.
     for dist in allValuesArray:
         minDisArray = np.append(minDisArray, dist[0])
 
+    # adding the x values of the nodes with the 10 smallest distances to new arrays.
     for numx in allValuesArray:
         minxArray = np.append(minxArray, numx[1])
 
+    # adding the y values of the nodes with the 10 smallest distances to new arrays.
     for numy in allValuesArray:
         minyArray = np.append(minyArray, numy[2])
 
+    # By sorting our values, if we take the first 10 of all of these arrays, they will be the 10 smallest distances.
     minDisArray = minDisArray[:10]
     minxArray = minxArray[:10]
     minyArray = minyArray[:10]
 
+    # If the final node is in the minimumn node array established above, it will be automaticlly chosen and the all encapsuling node will be broken.
     l = 0
     checkcheck = False
     for kk in minxArray:
@@ -180,13 +174,14 @@ while o < 40:
     if checkcheck == True:
         break
 
-    # Define arbitrary variable values
+    # Define arbitrary variable values for the drawing of blue lines and calculating of angle values.
     r = 0
     minxArrayint = 0
     minyArrayint = 0
     finalNodeArray = []
     angleArray = []
 
+    # This loop both creates blue lines that go from the current node to each of the 10 closest nodes, and calculates the angle between each of those nodes and the current node.
     for nums in minDisArray:
 
         # assign min x and y to iterating values
@@ -196,8 +191,6 @@ while o < 40:
 
         # highlight min x y distance values values in blue
         ax.plot(minxArrayint, minyArrayint, 'bo')
-        np.append(minxArrayint, currentNodeX)
-        np.append(minyArrayint, currentNodeY)
 
         X,Y = np.meshgrid(minxArrayint, minyArrayint)
         positions = np.vstack([Y.ravel(), X.ravel()])
@@ -211,24 +204,68 @@ while o < 40:
                 ax.plot(0, 0, x2, y2, color = 'blue')
 
         # find value for angle between direct start to end line and each node point, save to array
+        # if the node coordinate is less than both currentNodeX and currentNodeY, it will be subtracted from 180.
+        if np.logical_and(minxArrayint < currentNodeX, minyArrayint < currentNodeY).any():
 
-        angleX = (minxArrayint - currentNodeX)
-        angleY = (minyArrayint - currentNodeY)
+            lengthA = 1
+            lengthB = math.sqrt((currentNodeX - minxArrayint)**2 + (currentNodeY - minyArrayint)**2)
+            lengthC = math.sqrt((currentNodeX - (minxArrayint + 0.5))**2 + (currentNodeY - minyArrayint)**2)
 
-        if angleX == 0:
-            angleReal = 0
+            angleB = math.acos((lengthB**2 - lengthA**2 - lengthC**2) / (-2 * lengthA * lengthC))
+            angleA = math.asin((lengthA * math.sin(angleB)) / lengthB)
+            angleC = 180 - angleB - angleA
+
+            angleReal = 180 - angleC
             angleArray = np.append(angleArray, angleReal)
+            print(angleReal)
 
-        if angleX != 0:
-            angle = math.degrees(math.atan(angleY / angleX))
-            angleReal = 90 - abs(angle)
+        # if the node x coordinate is larger than currentNodeX, but the y coordinate is less than currentNodeY, it will be subtracted from 360.
+        if np.logical_and(minxArrayint > currentNodeX, minyArrayint < currentNodeY).any():
+
+            lengthA = 1
+            lengthB = math.sqrt((currentNodeX - minxArrayint)**2 + (currentNodeY - minyArrayint)**2)
+            lengthC = math.sqrt((currentNodeX - (minxArrayint + 0.5))**2 + (currentNodeY - minyArrayint)**2)
+
+            angleB = math.acos((lengthB**2 - lengthA**2 - lengthC**2) / (-2 * lengthA * lengthC))
+            angleA = math.asin((lengthA * math.sin(angleB)) / lengthB)
+            angleC = 180 - angleB - angleA
+
+            angleReal = 360 - angleC
             angleArray = np.append(angleArray, angleReal)
+            print(angleReal)
 
-        print(angleArray)
+        # if the node coordinate is directly above the current node, its angle will be set to 90 degrees automaticlly.
+        if minxArrayint == currentNodeX:
+
+            angleReal = 90
+            angleArray = np.append(angleArray, angleReal)
+            print(angleReal)
+
+        # if the node does not fit any of those conditions, it will follow the typical angle finding process without any abnormal subtraction
+        else:
+
+            lengthA = 1
+            lengthB = math.sqrt((currentNodeX - minxArrayint)**2 + (currentNodeY - minyArrayint)**2)
+            lengthC = math.sqrt((currentNodeX - (minxArrayint + 0.5))**2 + (currentNodeY - minyArrayint)**2)
+
+            angleB = math.acos((lengthB**2 - lengthA**2 - lengthC**2) / (-2 * lengthA * lengthC))
+            angleA = math.asin((lengthA * math.sin(angleB)) / lengthB)
+            angleC = 180 - angleB - angleA
+
+            angleReal = angleC
+            angleArray = np.append(angleArray, angleReal)
+            print(angleReal)
+
         r = r + 1
 
-    # Obstacle disqualifier!
+
+    print(angleArray)
+
+
+
+    # Obstacle disqualifier! The obstacle disqualifier works by checking if each node line intersects with any side of the square obstacles. If there is any intersection  detected, the node will be disqualified.
     def intersects(s0,s1):
+        # Sets the sides of the obstacle equal to dx0, dx1... and checks if they intersect with any node lines.
         dx0 = s0[1][0]-s0[0][0]
         dx1 = s1[1][0]-s1[0][0]
         dy0 = s0[1][1]-s0[0][1]
@@ -239,15 +276,18 @@ while o < 40:
         p3 = dy0*(s0[1][0]-s1[1][0]) - dx0*(s0[1][1]-s1[1][1])
         return (p0*p1<=0) & (p2*p3<=0)
 
+    # Initialises variables and iterators for counting intersections and creating arrays for node lines without intersections.
     n = 0
     minxArray4 = []
     minyArray4 = []
     angleArray2 = []
 
+    # iterates through all 10 NODES (n)
     while n < 10:
         b = 0
         intersectCounter = 0
 
+        # iterates through all 20 BLOCKS (b)
         while b < 20:
             nodePath = [(currentNodeX, currentNodeY), (minxArray[n], minyArray[n])]
             side1 = [(xminArray[b], yminArray[b]), (xmaxArray[b], yminArray[b])]
@@ -255,6 +295,7 @@ while o < 40:
             side3 = [(xminArray[b], ymaxArray[b]), (xmaxArray[b], ymaxArray[b])]
             side4 = [(xmaxArray[b], ymaxArray[b]), (xmaxArray[b], yminArray[b])]
 
+            # checks if any of the 4 sides intersect with each iterating node line or blockby using intersects function.
             if intersects(nodePath, side1):
                 intersectCounter = intersectCounter + 1
 
@@ -269,6 +310,8 @@ while o < 40:
 
 
             b = b + 1
+
+        # If there were no intersections for a node, it will be added to an array to be analyzed further.
         if intersectCounter == 0:
             minxArray4 = np.append(minxArray4, minxArray[n])
             minyArray4 = np.append(minyArray4, minyArray[n])
@@ -276,6 +319,9 @@ while o < 40:
 
         n = n + 1
 
+    print(angleArray2)
+
+    # Initializing iterators and arrays for checking if there are any nodes behind the current node
     finalBehindIterator = 0
     j = 0
     finalAngleArray1 = []
@@ -296,6 +342,8 @@ while o < 40:
         finalBehindIterator = finalBehindIterator + 1
         continue
 
+    print(finalAngleArray1)
+
     # define arbitrary variables for angle disqualification
     finalAngleIterator = 0
     totalFinalAngleArray = []
@@ -305,11 +353,9 @@ while o < 40:
     finalyArray1 = []
     checker3 = 0
 
-    # Angle disqualifier!
-    # check to see if angle between start to finish line to node is larger than 45 degrees
-    # disqualify node if it is.
+    # Angle disqualifier! This will check to see if angle between start to finish line to node is larger than 45 degrees, and do not add the node to the new array if it is.
     for angles in finalAngleArray1:
-        if angles <= 45:
+        if np.logical_and(angles >= 45, angles >= 135).any():
             minxArray3 = finalxArray[finalAngleIterator]
             minyArray3 = finalyArray[finalAngleIterator]
             finalxArray1 = np.append(finalxArray1, minxArray3)
@@ -318,28 +364,15 @@ while o < 40:
             checker3 = checker3 + 1
         finalAngleIterator = finalAngleIterator + 1
 
-#    if np.logical_and(checker2 != 0, checker3 == 0).any():
-#        finalAngleArray1 = np.append(finalAngleArray1, finalxArray[1])
-#        finalxArray1 = np.append(finalxArray1, finalxArray[1])
-#        finalyArray1 = np.append(finalyArray1, finalyArray[1])
+    print(totalFinalAngleArray)
 
-
+    # If there are no nodes left after the 'behind' disqualification (and consequential angle disqualification), the program will choose a node that is over 45 degrees / behind the current node.
     if np.logical_and(checker2 == 0, checker3 == 0).any():
         finalAngleArray1 = np.append(finalAngleArray1, angleArray2[1])
         finalxArray1 = np.append(finalxArray1, minxArray4[1])
         finalyArray1 = np.append(finalyArray1, minyArray4[1])
 
-#    if checker3 == 0 or checker2 == 0:
-#        if pastCurrentNodeX == minxArray[0] and pastCurrentNodeY == minyArray[0]:
-#            totalFinalAngleArray = np.append(totalFinalAngleArray, angleArray[1])
-#            finalxArray1 = np.append(finalxArray1, minxArray[1])
-#            finalyArray1 = np.append(finalyArray1, minyArray[1])
-#        else:
-#            totalFinalAngleArray = np.append(totalFinalAngleArray, angleArray[0])
-#            finalxArray1 = np.append(finalxArray, minxArray[0])
-#            finalyArray1 = np.append(finalyArray, minyArray[0])
-
-    # define arbitrary variables for final chosen node desicion making
+    # Define arbitrary variables for final chosen node desicion making
     finalDistanceIterator = 0
     b = 0
     minxArrayint1 = 0
@@ -348,30 +381,30 @@ while o < 40:
     finalfinalyArray = []
     finalfinalArray = []
 
-    # check to see if angle between start and end point and node is smaller than 25 degrees
-    # if it is, add it to a final qualifying array
-    # choose the longest (last) node in array
+    # check to see if angle between start and end point and node is smaller than 25 degrees, if it is, add it to a final qualifying array. Choose the longest (last) node in array if there are multiple qualifying nodes.
     checker = False
     for num2 in totalFinalAngleArray:
-        if num2 <= 25:
+        if np.logical_and(num2 >= 65, num2 <= 115).any():
             finalfinalArray = np.append(finalfinalArray, num2)
             finalfinalxArray = np.append(finalfinalxArray, finalxArray1[b])
             finalfinalyArray = np.append(finalfinalyArray, finalyArray1[b])
             checker = True
         b = b + 1
 
+    # If there are no nodes left over after all the disqualifiers, but the finalAngleArray1 (from 'behind' disqualifier) does not equal 0, the program will choose the first value of the array created after the 'behind' disqualification.
     if np.logical_and(checker == False, len(finalAngleArray1) != 0).any():
         finalfinalArray = np.append(finalfinalArray, finalAngleArray1[0])
         finalfinalxArray = np.append(finalfinalxArray, finalxArray1[0])
         finalfinalyArray = np.append(finalfinalyArray, finalyArray1[0])
 
+    # If there are no nodes left over after all the disqualifiers, and the finalAngleArray1 (from 'behind' disqualifier) equals 0, the program will choose the first value of the array created after the obstacle disqualification.
     if np.logical_and(checker == False, len(finalAngleArray1) == 0).any():
         finalfinalArray = np.append(finalfinalArray, angleArray2[0])
         finalfinalxArray = np.append(finalfinalxArray, minxArray4[0])
         finalfinalyArray = np.append(finalfinalyArray, minyArray4[0])
 
-    # choose the last element in the x and y coordinates to draw a green line
-    # line goes from start point to next
+    # Choosing of the next node. The program chooses the last value of the qualifying nodes, to ensure the longest path is being chosen.
+    # The previous current node will be set to the past current node and added to the past current node array.
     xcoord = finalfinalxArray[-1]
     ycoord = finalfinalyArray[-1]
     pastCurrentNodeX = currentNodeX
@@ -386,11 +419,11 @@ while o < 40:
     pastCurrentNodeXArray = np.append(pastCurrentNodeXArray, pastCurrentNodeX)
     pastCurrentNodeYArray = np.append(pastCurrentNodeYArray, pastCurrentNodeY)
 
-    print(finalfinalArray[-1])
 
     o = o + 1
     c = c + 1
 
+# The new current node will have a green line drawn to it from the past current node.
 q = 1
 while q < o:
     point5 = [pastCurrentNodeXArray[q-1], pastCurrentNodeYArray[q-1]]
@@ -400,8 +433,8 @@ while q < o:
     ax.plot(x_values4, y_values4, '#76EE00')
     q = q + 1
 
+# Calculates how long the program took to run from start to finish.
 print("My program took", time.time() - start_time, "to run")
-
 
 # Plotting nodes and the start and end nodes
 plt.scatter(nodex, nodey, c = colors)
