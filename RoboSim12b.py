@@ -412,7 +412,7 @@ while o < 40:
     # check to see if angle between start and end point and node is smaller than 25 degrees, if it is, add it to a final qualifying array. Choose the longest (last) node in array if there are multiple qualifying nodes.
     checker = False
     for num2 in totalFinalAngleArray:
-        if np.logical_and(num2 >= 65, num2 <= 115).any():
+        if num2 == 90:
             finalfinalArray = np.append(finalfinalArray, num2)
             finalfinalxArray = np.append(finalfinalxArray, finalxArray1[b])
             finalfinalyArray = np.append(finalfinalyArray, finalyArray1[b])
