@@ -447,16 +447,16 @@ while o < 40:
     # If there are no nodes left over after all the disqualifiers, but the finalAngleArray1 (from 'behind' disqualifier) does not equal 0, the program will choose the first value of the array created after the 'behind' disqualification.
     if np.logical_and(checker == False, len(finalAngleArray1) > 0).any():
         print("alt chooser 1")
-        finalfinalArray = np.append(finalfinalArray, finalAngleArray1[-1])
-        finalfinalxArray = np.append(finalfinalxArray, finalxArray[-1])
-        finalfinalyArray = np.append(finalfinalyArray, finalyArray[-1])
+        finalfinalArray = np.append(finalfinalArray, finalAngleArray1[0])
+        finalfinalxArray = np.append(finalfinalxArray, finalxArray[0])
+        finalfinalyArray = np.append(finalfinalyArray, finalyArray[0])
 
 #    # If there are no nodes left over after all the disqualifiers, and the finalAngleArray1 (from 'behind' disqualifier) equals 0, the program will choose the first value of the array created after the obstacle disqualification.
     if np.logical_and(checker == False, len(finalAngleArray1) == 0).any():
         print("alt chooser 2")
-        finalfinalArray = np.append(finalfinalArray, angleArray2[-1])
-        finalfinalxArray = np.append(finalfinalxArray, minxArray4[-1])
-        finalfinalyArray = np.append(finalfinalyArray, minyArray4[-1])
+        finalfinalArray = np.append(finalfinalArray, angleArray2[0])
+        finalfinalxArray = np.append(finalfinalxArray, minxArray4[0])
+        finalfinalyArray = np.append(finalfinalyArray, minyArray4[0])
 
     # Choosing of the next node. The program chooses the last value of the qualifying nodes, to ensure the longest path is being chosen.
     # The previous current node will be set to the past current node and added to the past current node array.
@@ -499,4 +499,4 @@ print("My program took", time.time() - start_time, "to run")
 plt.scatter(nodex, nodey, c = colors)
 start = plt.plot(5,0,'go')
 end = plt.plot(5,10,'ro')
-plt.()
+plt.show()
