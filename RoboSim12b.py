@@ -436,6 +436,7 @@ while o < 40:
         if np.logical_and(pastCurrentNodeX == finalxArray1[b], pastCurrentNodeY == finalyArray1[b]).any():
             print("past node")
         else:
+            print("normal chooser")
             finalfinalArray = np.append(finalfinalArray, num2)
             finalfinalxArray = np.append(finalfinalxArray, finalxArray1[b])
             finalfinalyArray = np.append(finalfinalyArray, finalyArray1[b])
@@ -445,12 +446,14 @@ while o < 40:
     print(checker, len(finalAngleArray1))
     # If there are no nodes left over after all the disqualifiers, but the finalAngleArray1 (from 'behind' disqualifier) does not equal 0, the program will choose the first value of the array created after the 'behind' disqualification.
     if np.logical_and(checker == False, len(finalAngleArray1) > 0).any():
+        print("alt chooser 1")
         finalfinalArray = np.append(finalfinalArray, finalAngleArray1[-1])
         finalfinalxArray = np.append(finalfinalxArray, finalxArray[-1])
         finalfinalyArray = np.append(finalfinalyArray, finalyArray[-1])
 
 #    # If there are no nodes left over after all the disqualifiers, and the finalAngleArray1 (from 'behind' disqualifier) equals 0, the program will choose the first value of the array created after the obstacle disqualification.
     if np.logical_and(checker == False, len(finalAngleArray1) == 0).any():
+        print("alt chooser 2")
         finalfinalArray = np.append(finalfinalArray, angleArray2[-1])
         finalfinalxArray = np.append(finalfinalxArray, minxArray4[-1])
         finalfinalyArray = np.append(finalfinalyArray, minyArray4[-1])
@@ -496,4 +499,4 @@ print("My program took", time.time() - start_time, "to run")
 plt.scatter(nodex, nodey, c = colors)
 start = plt.plot(5,0,'go')
 end = plt.plot(5,10,'ro')
-plt.show()
+plt.()
