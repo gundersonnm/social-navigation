@@ -94,6 +94,7 @@ while o < 40:
 
     # This checks if the path planner has reached the final node, and if it has, breaks the all encapsuling loop.
     if np.logical_and(currentNodeX == 5, currentNodeY == 10).any():
+        print("its there!")
         check1 = True
 
     if check1 == True:
@@ -153,9 +154,11 @@ while o < 40:
         minyArray = np.append(minyArray, numy[2])
 
     # By sorting our values, if we take the first 10 of all of these arrays, they will be the 10 smallest distances.
-    minDisArray = minDisArray[:10]
-    minxArray = minxArray[:10]
-    minyArray = minyArray[:10]
+    minDisArray = minDisArray[1:11]
+    minxArray = minxArray[1:11]
+    minyArray = minyArray[1:11]
+
+
 
     # If the final node is in the minimumn node array established above, it will be automaticlly chosen and the all encapsuling node will be broken.
     l = 0
@@ -210,19 +213,6 @@ while o < 40:
         # if the node coordinate is less than both currentNodeX and currentNodeY, it will be subtracted from 180.
         if np.logical_and(minxArrayint < currentNodeX, minyArrayint < currentNodeY).any():
 
-            #lengthA = 1
-            #lengthB = math.sqrt((currentNodeX - minxArrayint)**2 + (currentNodeY - minyArrayint)**2)
-            #lengthC = math.sqrt((currentNodeX - (minxArrayint))**2 + (currentNodeY - minyArrayint)**2)
-
-            #angleB = math.acos((lengthB**2 - lengthA**2 - lengthC**2) / (-2 * lengthA * lengthC))
-            #angleA = math.asin((lengthA * math.sin(angleB)) / lengthB)
-            #angleC = 180 - angleB - angleA
-
-            #angleReal = 180 - angleC
-            #angleArray = np.append(angleArray, angleReal)
-            #print(angleReal)
-            print("ahh1")
-
             angleTest = math.atan2((minyArrayint - currentNodeY), (minxArrayint - currentNodeX))
             degAngleTest = 360 - abs(math.degrees(angleTest))
             angleArray = np.append(angleArray, degAngleTest)
@@ -230,49 +220,29 @@ while o < 40:
         # if the node x coordinate is larger than currentNodeX, but the y coordinate is less than currentNodeY, it will be subtracted from 360.
         if np.logical_and(minxArrayint > currentNodeX, minyArrayint < currentNodeY).any():
 
-            #lengthA = 1
-            #lengthB = math.sqrt((currentNodeX - minxArrayint)**2 + (currentNodeY - minyArrayint)**2)
-            #lengthC = math.sqrt((currentNodeX - (minxArrayint))**2 + (currentNodeY - minyArrayint)**2)
-
-            #angleB = math.acos((lengthB**2 - lengthA**2 - lengthC**2) / (-2 * lengthA * lengthC))
-            #angleA = math.asin((lengthA * math.sin(angleB)) / lengthB)
-            #angleC = 180 - angleB - angleA
-
-            #angleReal = 360 - angleC
-            #angleArray = np.append(angleArray, angleReal)
-            #print(angleReal)
-            print("ahh2")
-
             angleTest = math.atan2((minyArrayint - currentNodeY), (minxArrayint - currentNodeX))
             degAngleTest = 360 - abs(math.degrees(angleTest))
             angleArray = np.append(angleArray, degAngleTest)
 
 
-        # if the node coordinate is directly above the current node, its angle will be set to 90 degrees automaticlly.
+        # if the node coordinate is directly above or below the current node, its angle will be set to 90 or 270 degrees automaticlly.
+        print("minxArrayint", minxArrayint)
+
         if minxArrayint == currentNodeX:
 
-            angleReal = 90
-            angleArray = np.append(angleArray, angleReal)
-            #print(angleReal)
-            print("ahh3")
+            if minyArrayint < currentNodeY:
+                angleReal = 270
+                angleArray = np.append(angleArray, angleReal)
+                #print(angleReal)
+
+            if minyArrayint > currentNodeY:
+                angleReal = 90
+                angleArray = np.append(angleArray, angleReal)
+                #print(angleReal)
 
 
         # if the node does not fit any of those conditions, it will follow the typical angle finding process without any abnormal subtraction
         else:
-
-            #lengthA = 1
-            #lengthB = math.sqrt((currentNodeX - minxArrayint)**2 + (currentNodeY - minyArrayint)**2)
-            #lengthC = math.sqrt((currentNodeX - (minxArrayint))**2 + (currentNodeY - minyArrayint)**2)
-
-            #angleB = math.acos((lengthB**2 - lengthA**2 - lengthC**2) / (-2 * lengthA * lengthC))
-            #angleA = math.asin((lengthA * math.sin(angleB)) / lengthB)
-            #angleC = 180 - angleB - angleA
-
-            #angleReal = angleC
-            #angleArray = np.append(angleArray, angleReal)
-            #print(angleReal)
-            print("ahh4")
-
 
             angleTest = math.atan2((minyArrayint - currentNodeY), (minxArrayint - currentNodeX))
             degAngleTest = math.degrees(angleTest)
@@ -287,7 +257,9 @@ while o < 40:
         r = r + 1
 
 
-    print(angleArray)
+    print("all angles", angleArray)
+    print("all x values", minxArray)
+    print("all y values", minyArray)
 
 
 
@@ -311,7 +283,7 @@ while o < 40:
     angleArray2 = []
 
     # iterates through all 10 NODES (n)
-    while n < 10:
+    while n < 9:
         b = 0
         intersectCounter = 0
 
@@ -347,7 +319,7 @@ while o < 40:
 
         n = n + 1
 
-    print(angleArray2)
+    print("after obstacle", angleArray2)
 
     # Initializing iterators and arrays for checking if there are any nodes behind the current node
     finalBehindIterator = 0
@@ -361,16 +333,16 @@ while o < 40:
     checker2 = 0
 
     # check to see if node is behind start point, disqualify node if it is.
-    for nums1 in minyArray4:
-        if nums1 > currentNodeY:
+    for angles in angleArray2:
+        if np.logical_and(angles >= 0, angles <= 180):
             finalxArray = np.append(finalxArray, minxArray4[finalBehindIterator])
             finalyArray = np.append(finalyArray, minyArray4[finalBehindIterator])
             finalAngleArray1 = np.append(finalAngleArray1, angleArray2[finalBehindIterator])
             checker2 = checker2 + 1
         finalBehindIterator = finalBehindIterator + 1
-        continue
+        # continue
 
-    print(finalAngleArray1)
+    print("after behind", finalAngleArray1)
 
     # define arbitrary variables for angle disqualification
     finalAngleIterator = 0
@@ -379,26 +351,75 @@ while o < 40:
     minyArray3 = []
     finalxArray1= []
     finalyArray1 = []
+    backupAngleArray = []
+    backupxArray = []
+    backupyArray = []
     checker3 = 0
 
     # Angle disqualifier! This will check to see if angle between start to finish line to node is larger than 45 degrees, and do not add the node to the new array if it is.
     for angles in finalAngleArray1:
-        if np.logical_and(angles >= 45, angles <= 135).any():
-            minxArray3 = finalxArray[finalAngleIterator]
-            minyArray3 = finalyArray[finalAngleIterator]
-            finalxArray1 = np.append(finalxArray1, minxArray3)
-            finalyArray1 = np.append(finalyArray1, minyArray3)
-            totalFinalAngleArray = np.append(totalFinalAngleArray, finalAngleArray1[finalAngleIterator])
-            checker3 = checker3 + 1
+
+        if currentNodeX < 5:
+            print("less than 5")
+            if np.logical_and(angles <= 90, angles >= 0).any():
+                #minxArray3 = finalxArray[finalAngleIterator]
+                #minyArray3 = finalyArray[finalAngleIterator]
+                finalxArray1 = np.append(finalxArray1, finalxArray[finalAngleIterator])
+                finalyArray1 = np.append(finalyArray1, finalyArray[finalAngleIterator])
+                totalFinalAngleArray = np.append(totalFinalAngleArray, finalAngleArray1[finalAngleIterator])
+                checker3 = checker3 + 1
+
+
+            if np.logical_and(angles >= 90, angles <= 180).any():
+                print("doodoo")
+                backupAngleArray = np.append(backupAngleArray, angles)
+                backupxArray = np.append(backupxArray, finalxArray[finalAngleIterator])
+                backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
+                # add to backup array
+
+        if currentNodeX > 5:
+            print("more than 5")
+            if np.logical_and(angles >= 90, angles <= 180).any():
+                #minxArray3 = finalxArray[finalAngleIterator]
+                #minyArray3 = finalyArray[finalAngleIterator]
+                finalxArray1 = np.append(finalxArray1, finalxArray[finalAngleIterator])
+                finalyArray1 = np.append(finalyArray1, finalyArray[finalAngleIterator])
+                totalFinalAngleArray = np.append(totalFinalAngleArray, finalAngleArray1[finalAngleIterator])
+                checker3 = checker3 + 1
+
+            if np.logical_and(angles <= 90, angles >= 180):
+                print("doodoo2")
+                backupAngleArray = np.append(backupAngleArray, angles)
+                backupxArray = np.append(backupxArray, finalxArray[finalAngleIterator])
+                backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
+            # add to backup array
+
+        if currentNodeX == 5:
+            print("its five!")
+            if np.logical_and(angles >= 45, angles <= 135).any():
+                finalxArray1 = np.append(finalxArray1, finalxArray[finalAngleIterator])
+                finalyArray1 = np.append(finalyArray1, finalyArray[finalAngleIterator])
+                totalFinalAngleArray = np.append(totalFinalAngleArray, finalAngleArray1[finalAngleIterator])
+                checker3 = checker3 + 1
+
+            else:
+                 print("doodoo3")
+                 backupAngleArray = np.append(backupAngleArray, angles)
+                 backupxArray = np.append(backupxArray, finalxArray[finalAngleIterator])
+                 backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
+
         finalAngleIterator = finalAngleIterator + 1
 
-    print(totalFinalAngleArray)
 
     # If there are no nodes left after the 'behind' disqualification (and consequential angle disqualification), the program will choose a node that is over 45 degrees / behind the current node.
     if np.logical_and(checker2 == 0, checker3 == 0).any():
-        finalAngleArray1 = np.append(finalAngleArray1, angleArray2[1])
-        finalxArray1 = np.append(finalxArray1, minxArray4[1])
-        finalyArray1 = np.append(finalyArray1, minyArray4[1])
+        print("backup", len(backupAngleArray))
+        totalFinalAngleArray = np.append(totalFinalAngleArray,[0])
+        finalxArray1 = np.append(finalxArray1, backupxArray[0])
+        finalyArray1 = np.append(finalyArray1, backupyArray[0])
+
+    print("after angle", totalFinalAngleArray)
+
 
     # Define arbitrary variables for final chosen node desicion making
     finalDistanceIterator = 0
@@ -412,27 +433,34 @@ while o < 40:
     # check to see if angle between start and end point and node is smaller than 25 degrees, if it is, add it to a final qualifying array. Choose the longest (last) node in array if there are multiple qualifying nodes.
     checker = False
     for num2 in totalFinalAngleArray:
-        if num2 == 90:
+        if np.logical_and(pastCurrentNodeX == finalxArray1[b], pastCurrentNodeY == finalyArray1[b]).any():
+            print("past node")
+        else:
             finalfinalArray = np.append(finalfinalArray, num2)
             finalfinalxArray = np.append(finalfinalxArray, finalxArray1[b])
             finalfinalyArray = np.append(finalfinalyArray, finalyArray1[b])
             checker = True
         b = b + 1
 
+    print(checker, len(finalAngleArray1))
     # If there are no nodes left over after all the disqualifiers, but the finalAngleArray1 (from 'behind' disqualifier) does not equal 0, the program will choose the first value of the array created after the 'behind' disqualification.
-    if np.logical_and(checker == False, len(finalAngleArray1) != 0).any():
-        finalfinalArray = np.append(finalfinalArray, finalAngleArray1[0])
-        finalfinalxArray = np.append(finalfinalxArray, finalxArray1[0])
-        finalfinalyArray = np.append(finalfinalyArray, finalyArray1[0])
+    if np.logical_and(checker == False, len(finalAngleArray1) > 0).any():
+        finalfinalArray = np.append(finalfinalArray, finalAngleArray1[-1])
+        finalfinalxArray = np.append(finalfinalxArray, finalxArray[-1])
+        finalfinalyArray = np.append(finalfinalyArray, finalyArray[-1])
 
-    # If there are no nodes left over after all the disqualifiers, and the finalAngleArray1 (from 'behind' disqualifier) equals 0, the program will choose the first value of the array created after the obstacle disqualification.
+#    # If there are no nodes left over after all the disqualifiers, and the finalAngleArray1 (from 'behind' disqualifier) equals 0, the program will choose the first value of the array created after the obstacle disqualification.
     if np.logical_and(checker == False, len(finalAngleArray1) == 0).any():
-        finalfinalArray = np.append(finalfinalArray, angleArray2[0])
-        finalfinalxArray = np.append(finalfinalxArray, minxArray4[0])
-        finalfinalyArray = np.append(finalfinalyArray, minyArray4[0])
+        finalfinalArray = np.append(finalfinalArray, angleArray2[-1])
+        finalfinalxArray = np.append(finalfinalxArray, minxArray4[-1])
+        finalfinalyArray = np.append(finalfinalyArray, minyArray4[-1])
 
     # Choosing of the next node. The program chooses the last value of the qualifying nodes, to ensure the longest path is being chosen.
     # The previous current node will be set to the past current node and added to the past current node array.
+    print("chosen angle", finalfinalArray[-1])
+    print("chosen x", finalfinalxArray[-1])
+    print("chosen y", finalfinalyArray[-1])
+
     xcoord = finalfinalxArray[-1]
     ycoord = finalfinalyArray[-1]
     pastCurrentNodeX = currentNodeX
