@@ -188,6 +188,8 @@ while o < 40:
         minxArrayint = minxArray[r]
         minyArrayint = minyArray[r]
         finalNodeArray.append(nums)
+        angleReal = 0
+        angleTest = 0
 
         # highlight min x y distance values values in blue
         ax.plot(minxArrayint, minyArrayint, 'bo')
@@ -203,58 +205,84 @@ while o < 40:
                 x2, y2 = line.xy
                 ax.plot(0, 0, x2, y2, color = 'blue')
 
+
         # find value for angle between direct start to end line and each node point, save to array
         # if the node coordinate is less than both currentNodeX and currentNodeY, it will be subtracted from 180.
         if np.logical_and(minxArrayint < currentNodeX, minyArrayint < currentNodeY).any():
 
-            lengthA = 1
-            lengthB = math.sqrt((currentNodeX - minxArrayint)**2 + (currentNodeY - minyArrayint)**2)
-            lengthC = math.sqrt((currentNodeX - (minxArrayint + 0.5))**2 + (currentNodeY - minyArrayint)**2)
+            #lengthA = 1
+            #lengthB = math.sqrt((currentNodeX - minxArrayint)**2 + (currentNodeY - minyArrayint)**2)
+            #lengthC = math.sqrt((currentNodeX - (minxArrayint))**2 + (currentNodeY - minyArrayint)**2)
 
-            angleB = math.acos((lengthB**2 - lengthA**2 - lengthC**2) / (-2 * lengthA * lengthC))
-            angleA = math.asin((lengthA * math.sin(angleB)) / lengthB)
-            angleC = 180 - angleB - angleA
+            #angleB = math.acos((lengthB**2 - lengthA**2 - lengthC**2) / (-2 * lengthA * lengthC))
+            #angleA = math.asin((lengthA * math.sin(angleB)) / lengthB)
+            #angleC = 180 - angleB - angleA
 
-            angleReal = 180 - angleC
-            angleArray = np.append(angleArray, angleReal)
-            print(angleReal)
+            #angleReal = 180 - angleC
+            #angleArray = np.append(angleArray, angleReal)
+            #print(angleReal)
+            print("ahh1")
+
+            angleTest = math.atan2((minyArrayint - currentNodeY), (minxArrayint - currentNodeX))
+            degAngleTest = 360 - abs(math.degrees(angleTest))
+            angleArray = np.append(angleArray, degAngleTest)
 
         # if the node x coordinate is larger than currentNodeX, but the y coordinate is less than currentNodeY, it will be subtracted from 360.
         if np.logical_and(minxArrayint > currentNodeX, minyArrayint < currentNodeY).any():
 
-            lengthA = 1
-            lengthB = math.sqrt((currentNodeX - minxArrayint)**2 + (currentNodeY - minyArrayint)**2)
-            lengthC = math.sqrt((currentNodeX - (minxArrayint + 0.5))**2 + (currentNodeY - minyArrayint)**2)
+            #lengthA = 1
+            #lengthB = math.sqrt((currentNodeX - minxArrayint)**2 + (currentNodeY - minyArrayint)**2)
+            #lengthC = math.sqrt((currentNodeX - (minxArrayint))**2 + (currentNodeY - minyArrayint)**2)
 
-            angleB = math.acos((lengthB**2 - lengthA**2 - lengthC**2) / (-2 * lengthA * lengthC))
-            angleA = math.asin((lengthA * math.sin(angleB)) / lengthB)
-            angleC = 180 - angleB - angleA
+            #angleB = math.acos((lengthB**2 - lengthA**2 - lengthC**2) / (-2 * lengthA * lengthC))
+            #angleA = math.asin((lengthA * math.sin(angleB)) / lengthB)
+            #angleC = 180 - angleB - angleA
 
-            angleReal = 360 - angleC
-            angleArray = np.append(angleArray, angleReal)
-            print(angleReal)
+            #angleReal = 360 - angleC
+            #angleArray = np.append(angleArray, angleReal)
+            #print(angleReal)
+            print("ahh2")
+
+            angleTest = math.atan2((minyArrayint - currentNodeY), (minxArrayint - currentNodeX))
+            degAngleTest = 360 - abs(math.degrees(angleTest))
+            angleArray = np.append(angleArray, degAngleTest)
+
 
         # if the node coordinate is directly above the current node, its angle will be set to 90 degrees automaticlly.
         if minxArrayint == currentNodeX:
 
             angleReal = 90
             angleArray = np.append(angleArray, angleReal)
-            print(angleReal)
+            #print(angleReal)
+            print("ahh3")
+
 
         # if the node does not fit any of those conditions, it will follow the typical angle finding process without any abnormal subtraction
         else:
 
-            lengthA = 1
-            lengthB = math.sqrt((currentNodeX - minxArrayint)**2 + (currentNodeY - minyArrayint)**2)
-            lengthC = math.sqrt((currentNodeX - (minxArrayint + 0.5))**2 + (currentNodeY - minyArrayint)**2)
+            #lengthA = 1
+            #lengthB = math.sqrt((currentNodeX - minxArrayint)**2 + (currentNodeY - minyArrayint)**2)
+            #lengthC = math.sqrt((currentNodeX - (minxArrayint))**2 + (currentNodeY - minyArrayint)**2)
 
-            angleB = math.acos((lengthB**2 - lengthA**2 - lengthC**2) / (-2 * lengthA * lengthC))
-            angleA = math.asin((lengthA * math.sin(angleB)) / lengthB)
-            angleC = 180 - angleB - angleA
+            #angleB = math.acos((lengthB**2 - lengthA**2 - lengthC**2) / (-2 * lengthA * lengthC))
+            #angleA = math.asin((lengthA * math.sin(angleB)) / lengthB)
+            #angleC = 180 - angleB - angleA
 
-            angleReal = angleC
-            angleArray = np.append(angleArray, angleReal)
-            print(angleReal)
+            #angleReal = angleC
+            #angleArray = np.append(angleArray, angleReal)
+            #print(angleReal)
+            print("ahh4")
+
+
+            angleTest = math.atan2((minyArrayint - currentNodeY), (minxArrayint - currentNodeX))
+            degAngleTest = math.degrees(angleTest)
+
+
+            if degAngleTest < 0:
+                degAngleTest = 360 - abs(math.degrees(angleTest))
+
+            else:
+                angleArray = np.append(angleArray, degAngleTest)
 
         r = r + 1
 
@@ -355,7 +383,7 @@ while o < 40:
 
     # Angle disqualifier! This will check to see if angle between start to finish line to node is larger than 45 degrees, and do not add the node to the new array if it is.
     for angles in finalAngleArray1:
-        if np.logical_and(angles >= 45, angles >= 135).any():
+        if np.logical_and(angles >= 45, angles <= 135).any():
             minxArray3 = finalxArray[finalAngleIterator]
             minyArray3 = finalyArray[finalAngleIterator]
             finalxArray1 = np.append(finalxArray1, minxArray3)
