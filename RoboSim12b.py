@@ -6,8 +6,49 @@ import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import LineString
 import time
+import numpy as np
+from matplotlib import pyplot as plt
+from matplotlib import animation
 
 start_time = time.time()
+
+dynamicxArray = []
+dynamicyArray = []
+
+# set animation to iterate one frame with each new node chosen (frame == o?), with each new iteration save iterating center value to obstacle arrray. navigate around that if applicable.
+
+#fig = plt.figure()
+#fig.set_dpi(100)
+#fig.set_size_inches(7, 6.5)
+
+#ax = plt.axes(xlim=(0, 10), ylim=(0, 10))
+#patch = plt.Circle((0, 0), 0.5, fc='r')
+
+#def init():
+#    patch.center = (5, 5)
+#    ax.add_patch(patch)
+#    return patch,
+
+#def animate(i):
+#    x, y = patch.center
+#    x = i
+#    y = i
+#    patch.center = (x, y)
+#    return patch,
+
+#anim = animation.FuncAnimation(fig, animate,
+#   init_func=init,
+ #  frames=500,
+#   interval=200,
+#   blit=True)
+
+#i = 0
+#while i < 10:
+#    dynamicxArray = np.append(dynamicxArray, i)
+#    dynamicyArray = np.append(dynamicyArray, (i))
+#    i = i + 1
+
+print(dynamicxArray, dynamicyArray)
 
 # Assigns RGB color values to be used in simulation
 white = (255, 255, 255)
@@ -457,32 +498,41 @@ while o < 40:
 
     print(checker, len(finalAngleArray1))
     # If there are no nodes left over after all the disqualifiers, but the finalAngleArray1 (from 'behind' disqualifier) does not equal 0, the program will choose the first value of the array created after the 'behind' disqualification.
+    p = 0
     if np.logical_and(checker == False, len(finalAngleArray1) > 0).any():
-        if np.logical_and(pastCurrentNodeX == finalxArray1[0], pastCurrentNodeY == finalyArray1[0]).any():
-            print("past node2")
-            backupFinalAngleArray = np.append(finalfinalArray, finalAngleArray1[0])
-            backupFinalxArray = np.append(finalfinalxArray, finalxArray1[0])
-            backupFinalyArray = np.append(finalfinalyArray, finalyArray1[0])
-        else:
-            print("alt chooser 1")
-            finalfinalArray = np.append(finalfinalArray, finalAngleArray1[0])
-            finalfinalxArray = np.append(finalfinalxArray, finalxArray[0])
-            finalfinalyArray = np.append(finalfinalyArray, finalyArray[0])
-            checker = True
+        for nums in finalAngleArray1:
+            if np.logical_and(pastCurrentNodeX == finalxArray[p], pastCurrentNodeY == finalyArray[p]).any():
+    #            backupFinalAngleArray = np.append(finalfinalArray, angleArray2[0])
+    #            backupFinalxArray = np.append(finalfinalxArray, minxArray4[0])
+    #            backupFinalyArray = np.append(finalfinalyArray, minyArray4[0])
+    #        if np.logical_and(pastCurrentNodeX == finalxArray1[0], pastCurrentNodeY == finalyArray1[0]).any():
+                print("past node2")
+                backupFinalAngleArray = np.append(finalfinalArray, finalAngleArray1[p])
+                backupFinalxArray = np.append(finalfinalxArray, finalxArray1[p])
+                backupFinalyArray = np.append(finalfinalyArray, finalyArray1[p])
+            else:
+                print("alt chooser 1")
+                finalfinalArray = np.append(finalfinalArray, finalAngleArray1[p])
+                finalfinalxArray = np.append(finalfinalxArray, finalxArray[p])
+                finalfinalyArray = np.append(finalfinalyArray, finalyArray[p])
+                checker = True
 
 #    # If there are no nodes left over after all the disqualifiers, and the finalAngleArray1 (from 'behind' disqualifier) equals 0, the program will choose the first value of the array created after the obstacle disqualification.
+    f = 0
     if np.logical_and(checker == False, len(finalAngleArray1) == 0).any():
-        if np.logical_and(pastCurrentNodeX == finalxArray1[0], pastCurrentNodeY == finalyArray1[0]).any():
-            print("past node3")
-            backupFinalAngleArray = np.append(finalfinalArray, angleArray2[0])
-            backupFinalxArray = np.append(finalfinalxArray, minxArray4[0])
-            backupFinalyArray = np.append(finalfinalyArray, minyArray4[0])
-        else:
-            print("alt chooser 2")
-            finalfinalArray = np.append(finalfinalArray, angleArray2[0])
-            finalfinalxArray = np.append(finalfinalxArray, minxArray4[0])
-            finalfinalyArray = np.append(finalfinalyArray, minyArray4[0])
-            checker = True
+        for nums in angleArray2:
+            if np.logical_and(pastCurrentNodeX == minxArray4[f], pastCurrentNodeY == minyArray4[f]).any():
+                print("past node3")
+                backupFinalAngleArray = np.append(finalfinalArray, angleArray2[f])
+                backupFinalxArray = np.append(finalfinalxArray, minxArray4[f])
+                backupFinalyArray = np.append(finalfinalyArray, minyArray4[f])
+            else:
+                print("alt chooser 2")
+                finalfinalArray = np.append(finalfinalArray, angleArray2[f])
+                finalfinalxArray = np.append(finalfinalxArray, minxArray4[f])
+                finalfinalyArray = np.append(finalfinalyArray, minyArray4[f])
+                checker = True
+            f = f + 1
 
     if checker == False:
         finalfinalArray = np.append(finalfinalArray, backupFinalAngleArray[0])
