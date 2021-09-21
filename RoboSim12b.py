@@ -16,7 +16,7 @@ dynamicxArray = []
 dynamicyArray = []
 
 # set animation to iterate one frame with each new node chosen (frame == o?), with each new iteration save iterating center value to obstacle arrray. navigate around that if applicable.
-
+ 
 #fig = plt.figure()
 #fig.set_dpi(100)
 #fig.set_size_inches(7, 6.5)
