@@ -387,7 +387,7 @@ while o < 40:
                 totalFinalAngleArray = np.append(totalFinalAngleArray, finalAngleArray1[finalAngleIterator])
                 checker3 = checker3 + 1
 
-            if np.logical_and(angles <= 90, angles >= 180):
+            if np.logical_or(angles <= 90, angles >= 180):
                 print("doodoo2")
                 backupAngleArray = np.append(backupAngleArray, angles)
                 backupxArray = np.append(backupxArray, finalxArray[finalAngleIterator])
@@ -412,11 +412,17 @@ while o < 40:
 
 
     # If there are no nodes left after the 'behind' disqualification (and consequential angle disqualification), the program will choose a node that is over 45 degrees / behind the current node.
-    if np.logical_and(checker2 == 0, checker3 == 0).any():
-        print("backup", len(backupAngleArray))
-        totalFinalAngleArray = np.append(totalFinalAngleArray,[0])
+    if np.logical_and(checker2 != 0, checker3 == 0).any():
+        print("BACKUP ARRAY !!!", len(backupAngleArray))
+        totalFinalAngleArray = np.append(totalFinalAngleArray, backupAngleArray[0])
         finalxArray1 = np.append(finalxArray1, backupxArray[0])
         finalyArray1 = np.append(finalyArray1, backupyArray[0])
+
+    if np.logical_and(checker2 == 0, checker3 == 0).any():
+        print("move back")
+        totalFinalAngleArray = np.append(totalFinalAngleArray, angleArray2[0])
+        finalxArray1 = np.append(finalxArray1, minxArray4[0])
+        finalyArray1 = np.append(finalyArray1, minyArray4[0])
 
     print("after angle", totalFinalAngleArray)
 
@@ -429,12 +435,18 @@ while o < 40:
     finalfinalxArray = []
     finalfinalyArray = []
     finalfinalArray = []
+    backupFinalAngleArray = []
+    backupFinalxArray = []
+    backupFinalyArray = []
 
     # check to see if angle between start and end point and node is smaller than 25 degrees, if it is, add it to a final qualifying array. Choose the longest (last) node in array if there are multiple qualifying nodes.
     checker = False
     for num2 in totalFinalAngleArray:
         if np.logical_and(pastCurrentNodeX == finalxArray1[b], pastCurrentNodeY == finalyArray1[b]).any():
-            print("past node")
+            print("past node1")
+            backupFinalAngleArray = np.append(finalfinalArray, num2)
+            backupFinalxArray = np.append(finalfinalxArray, finalxArray1[b])
+            backupFinalyArray = np.append(finalfinalyArray, finalyArray1[b])
         else:
             print("normal chooser")
             finalfinalArray = np.append(finalfinalArray, num2)
@@ -446,17 +458,36 @@ while o < 40:
     print(checker, len(finalAngleArray1))
     # If there are no nodes left over after all the disqualifiers, but the finalAngleArray1 (from 'behind' disqualifier) does not equal 0, the program will choose the first value of the array created after the 'behind' disqualification.
     if np.logical_and(checker == False, len(finalAngleArray1) > 0).any():
-        print("alt chooser 1")
-        finalfinalArray = np.append(finalfinalArray, finalAngleArray1[0])
-        finalfinalxArray = np.append(finalfinalxArray, finalxArray[0])
-        finalfinalyArray = np.append(finalfinalyArray, finalyArray[0])
+        if np.logical_and(pastCurrentNodeX == finalxArray1[0], pastCurrentNodeY == finalyArray1[0]).any():
+            print("past node2")
+            backupFinalAngleArray = np.append(finalfinalArray, finalAngleArray1[0])
+            backupFinalxArray = np.append(finalfinalxArray, finalxArray1[0])
+            backupFinalyArray = np.append(finalfinalyArray, finalyArray1[0])
+        else:
+            print("alt chooser 1")
+            finalfinalArray = np.append(finalfinalArray, finalAngleArray1[0])
+            finalfinalxArray = np.append(finalfinalxArray, finalxArray[0])
+            finalfinalyArray = np.append(finalfinalyArray, finalyArray[0])
+            checker = True
 
 #    # If there are no nodes left over after all the disqualifiers, and the finalAngleArray1 (from 'behind' disqualifier) equals 0, the program will choose the first value of the array created after the obstacle disqualification.
     if np.logical_and(checker == False, len(finalAngleArray1) == 0).any():
-        print("alt chooser 2")
-        finalfinalArray = np.append(finalfinalArray, angleArray2[0])
-        finalfinalxArray = np.append(finalfinalxArray, minxArray4[0])
-        finalfinalyArray = np.append(finalfinalyArray, minyArray4[0])
+        if np.logical_and(pastCurrentNodeX == finalxArray1[0], pastCurrentNodeY == finalyArray1[0]).any():
+            print("past node3")
+            backupFinalAngleArray = np.append(finalfinalArray, angleArray2[0])
+            backupFinalxArray = np.append(finalfinalxArray, minxArray4[0])
+            backupFinalyArray = np.append(finalfinalyArray, minyArray4[0])
+        else:
+            print("alt chooser 2")
+            finalfinalArray = np.append(finalfinalArray, angleArray2[0])
+            finalfinalxArray = np.append(finalfinalxArray, minxArray4[0])
+            finalfinalyArray = np.append(finalfinalyArray, minyArray4[0])
+            checker = True
+
+    if checker == False:
+        finalfinalArray = np.append(finalfinalArray, backupFinalAngleArray[0])
+        finalfinalxArray = np.append(finalfinalxArray, backupFinalxArray[0])
+        finalfinalyArray = np.append(finalfinalyArray, backupFinalyArray[0])
 
     # Choosing of the next node. The program chooses the last value of the qualifying nodes, to ensure the longest path is being chosen.
     # The previous current node will be set to the past current node and added to the past current node array.
