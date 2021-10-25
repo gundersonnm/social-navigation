@@ -327,32 +327,37 @@ while o < 40:
 
     # iterates through all 10 NODES (n)
     while n < 9:
+        # if the distance from current node to a corner of an obstacle is greater than 4, dont check it for collisions
         b = 0
         intersectCounter = 0
 
         # iterates through all 20 BLOCKS (b)
         while b < 20:
-            nodePath = [(currentNodeX, currentNodeY), (minxArray[n], minyArray[n])]
-            side1 = [(xminArray[b], yminArray[b]), (xmaxArray[b], yminArray[b])]
-            side2 = [(xminArray[b], yminArray[b]), (xminArray[b], ymaxArray[b])]
-            side3 = [(xminArray[b], ymaxArray[b]), (xmaxArray[b], ymaxArray[b])]
-            side4 = [(xmaxArray[b], ymaxArray[b]), (xmaxArray[b], yminArray[b])]
+            nodeDistance = 0
+            #distance calculation from node to edge of obstacle
+            nodeDistance = math.sqrt((xminArray[b] - currentNodeX)**2 + (yminArray[b] - currentNodeY)**2)
+            if nodeDistance <= 4:
+                nodePath = [(currentNodeX, currentNodeY), (minxArray[n], minyArray[n])]
+                side1 = [(xminArray[b], yminArray[b]), (xmaxArray[b], yminArray[b])]
+                side2 = [(xminArray[b], yminArray[b]), (xminArray[b], ymaxArray[b])]
+                side3 = [(xminArray[b], ymaxArray[b]), (xmaxArray[b], ymaxArray[b])]
+                side4 = [(xmaxArray[b], ymaxArray[b]), (xmaxArray[b], yminArray[b])]
 
-            # checks if any of the 4 sides intersect with each iterating node line or blockby using intersects function.
-            if intersects(nodePath, side1):
-                intersectCounter = intersectCounter + 1
+                # checks if any of the 4 sides intersect with each iterating node line or blockby using intersects function.
+                if intersects(nodePath, side1):
+                    intersectCounter = intersectCounter + 1
 
-            if intersects(nodePath, side2):
-                intersectCounter = intersectCounter + 1
+                if intersects(nodePath, side2):
+                    intersectCounter = intersectCounter + 1
 
-            if intersects(nodePath, side3):
-                intersectCounter = intersectCounter + 1
+                if intersects(nodePath, side3):
+                    intersectCounter = intersectCounter + 1
 
-            if intersects(nodePath, side4):
-                intersectCounter = intersectCounter + 1
-
+                if intersects(nodePath, side4):
+                    intersectCounter = intersectCounter + 1
 
             b = b + 1
+
 
         # If there were no intersections for a node, it will be added to an array to be analyzed further.
         if intersectCounter == 0:
