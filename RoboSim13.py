@@ -12,45 +12,6 @@ from matplotlib import animation
 
 start_time = time.time()
 
-dynamicxArray = []
-dynamicyArray = []
-
-# set animation to iterate one frame with each new node chosen (frame == o?), with each new iteration save iterating center value to obstacle arrray. navigate around that if applicable.
-
-"""
-fig = plt.figure()
-fig.set_dpi(100)
-fig.set_size_inches(7, 6.5)
-"""
-ax = plt.axes(xlim=(0, 10), ylim=(0, 10))
-patch = plt.Circle((0, 0), 0.4, fc='r')
-
-def init():
-    patch.center = (5, 5)
-    ax.add_patch(patch)
-    return patch,
-
-def animate(i):
-    x, y = patch.center
-    x = i
-    y = i
-    patch.center = (x, y)
-    return patch,
-
-anim = animation.FuncAnimation(fig, animate,
-   init_func=init,
-   frames=500,
-   interval=200,
-   blit=True)
-i = 0
-
-while i < 10:
-    dynamicxArray = np.append(dynamicxArray, i)
-    dynamicyArray = np.append(dynamicyArray, (i))
-    i = i + 1
-
-
-print("dynamic array", dynamicxArray, dynamicyArray)
 
 # Assigns RGB color values to be used in simulation
 white = (255, 255, 255)
@@ -63,7 +24,7 @@ gray = (131, 139, 139)
 colors = (0,0,0)
 
 # Creation of nodes
-gridX, gridY = np.mgrid[0:11, 0:11]
+gridX, gridY = np.mgrid[0:13, 0:10.1]
 
 # Define empty arrays to hold the x and y coordinate values of each node
 nodex = []
@@ -79,21 +40,18 @@ for nodes1 in gridY:
     nodey.append(nodes1 + 0.5)
 
 # Define empty arrays for creation of obstacles
-xArray = []
-yArray = []
-xminArray = []
-yminArray = []
-xmaxArray = []
-ymaxArray = []
+xObstacleArray = []
+yObstacleArray = []
+xminOsbtacleArray = []
+yminObstacleArray = []
+xmaxObstacleArray = []
+ymaxObstacleArray = []
 
 # Creation of obstacles, and adding their coordinate values to xmin, ymin, xmax, and ymax Arrays. We use these values to calculate intersection points.
 fig = plt.figure()
 ax = fig.add_subplot(111, aspect='equal')
-plt.xlim([0, 10.05])
-plt.ylim([0, 10.05])
-
-#ax = plt.axes(xlim=(0, 10), ylim=(0, 10))
-#patch = plt.Circle((0, 0), 0.4, fc='r')
+plt.xlim([0, 10.5])
+plt.ylim([0, 10.5])
 n=20
 for i in range(0,n):
     x = random.uniform(0, 9)
@@ -103,44 +61,27 @@ for i in range(0,n):
     ymin = y
     xmax = x + 1
     ymax = y + 1
-    xArray = np.append(xArray, x)
-    yArray = np.append(yArray, y)
-    xminArray = np.append(xminArray, xmin)
-    yminArray = np.append(yminArray, ymin)
-    xmaxArray = np.append(xmaxArray, xmax)
-    ymaxArray = np.append(ymaxArray, ymax)
-
-def init():
-    patch.center = (5, 5)
-    ax.add_patch(patch)
-    return patch,
-
-def animate(i):
-    x, y = patch.center
-    x = i
-    y = i
-    patch.center = (x, y)
-    return patch,
-
-anim = animation.FuncAnimation(fig, animate,
-   init_func=init,
-   frames=500,
-   interval=200,
-   blit=True)
-
+    xObstacleArray = np.append(xObstacleArray, x)
+    yObstacleArray = np.append(yObstacleArray, y)
+    xminOsbtacleArray = np.append(xminOsbtacleArray, xmin)
+    yminObstacleArray = np.append(yminObstacleArray, ymin)
+    xmaxObstacleArray = np.append(xmaxObstacleArray, xmax)
+    ymaxObstacleArray = np.append(ymaxObstacleArray, ymax)
 
 # Define arbitrary iterators and empty arrays to hold the values of the 10 closest nodes to the CurrentNode
 nodeDistArray = []
+minDisArray = []
+
 nodexArray = []
 nodeyArray = []
-minDisArray = []
-minxArray = []
-minyArray = []
+
+
 currentNodeX = 5
 currentNodeY = 0
 o = 0
 pastCurrentNodeX = 0
 pastCurrentNodeY = 0
+
 pastCurrentNodeXArray = []
 pastCurrentNodeYArray = []
 
@@ -148,17 +89,21 @@ pastCurrentNodeYArray = []
 nodexArray = np.append(nodex, currentNodeX)
 nodeyArray = np.append(nodey, currentNodeY)
 
-nodexArray = np.append(nodexArray, 5)
-nodeyArray = np.append(nodeyArray, 10)
+finalNodex = 5
+finalNodey = 10
+
+nodexArray = np.append(nodexArray, finalNodex)
+nodeyArray = np.append(nodeyArray, finalNodey)
 check1 = False
 
 c = 0
 
 # Loop encapsuling ALL path planning code. It will repeat until it either reaches the final node or has iterated 40 times (a failsafe for the code getting stuck somewhere).
 while o < 40:
-
+    condition1 = currentNodeX == finalNodex
+    condition2 = currentNodeY == finalNodey
     # This checks if the path planner has reached the final node, and if it has, breaks the all encapsuling loop.
-    if np.logical_and(currentNodeX == 5, currentNodeY == 10).any():
+    if np.logical_and(condition1, condition2).any():
         print("its there!")
         check1 = True
 
@@ -172,8 +117,9 @@ while o < 40:
 
     # Minimum values will only be added to the arrays if and only if the nodes are not current node X or Y, or any past current nodes.
     for values in nodexArray:
-
-        if np.logical_and(nodexArray[x] != currentNodeX, nodeyArray[x] != currentNodeY).any():
+        condition1 = nodexArray[x] != currentNodeX
+        condition2 =  nodeyArray[x] != currentNodeY
+        if np.logical_and(condition1, condition2).any():
 
             if o == 0:
                 nodeDistArray.append(math.sqrt((nodexArray[p] - currentNodeX)**2 + (nodeyArray[p] - currentNodeY)**2))
@@ -187,9 +133,14 @@ while o < 40:
 
 
             if o != 0:
-                if np.logical_and(nodexArray[x] != pastCurrentNodeX, nodeyArray[x] != pastCurrentNodeY).any():
+                condition1 = nodexArray[x] != pastCurrentNodeX
+                condition2 = nodeyArray[x] != pastCurrentNodeY
+                if np.logical_and(condition1, condition2).any():
 
-                    if np.logical_and(nodexArray[x] != pastCurrentNodeXArray[o-2], nodeyArray[x] != pastCurrentNodeYArray[o-2]).any():
+                    condition1 = nodexArray[x] != pastCurrentNodeXArray[o-2]
+                    condition2 = nodeyArray[x] != pastCurrentNodeYArray[o-2]
+
+                    if np.logical_and(condition1, condition2).any():
 
                         nodeDistArray.append(math.sqrt((nodexArray[p] - (currentNodeX))**2 + (nodeyArray[p] - currentNodeY)**2))
                         allValuesArray = zip(nodeDistArray, nodexArray, nodeyArray)
@@ -229,9 +180,11 @@ while o < 40:
     l = 0
     checkcheck = False
     for kk in minxArray:
-        if np.logical_and(kk == 5, minyArray[l] == 10).any():
+        condition1 = kk == finalNodex
+        condition2 = minyArray[l] == finalNodey
+        if np.logical_and(condition1, condition2).any():
             point1 = [currentNodeX, currentNodeY]
-            point2 = [5, 10]
+            point2 = [finalNodex, finalNodey]
             x_values = [point1[0], point2[0]]
             y_values = [point1[1], point2[1]]
             ax.plot(x_values, y_values, '#76EE00')
@@ -276,14 +229,18 @@ while o < 40:
 
         # find value for angle between direct start to end line and each node point, save to array
         # if the node coordinate is less than both currentNodeX and currentNodeY, it will be subtracted from 180.
-        if np.logical_and(minxArrayint < currentNodeX, minyArrayint < currentNodeY).any():
+        condition1 = minxArrayint < currentNodeX
+        condition2 = minyArrayint < currentNodeY
+        if np.logical_and(condition1, condition2).any():
 
             angleTest = math.atan2((minyArrayint - currentNodeY), (minxArrayint - currentNodeX))
             degAngleTest = 360 - abs(math.degrees(angleTest))
             angleArray = np.append(angleArray, degAngleTest)
 
         # if the node x coordinate is larger than currentNodeX, but the y coordinate is less than currentNodeY, it will be subtracted from 360.
-        if np.logical_and(minxArrayint > currentNodeX, minyArrayint < currentNodeY).any():
+        condition1 = minxArrayint > currentNodeX
+        condition2 = minyArrayint < currentNodeY
+        if np.logical_and(condition1, condition2).any():
 
             angleTest = math.atan2((minyArrayint - currentNodeY), (minxArrayint - currentNodeX))
             degAngleTest = 360 - abs(math.degrees(angleTest))
@@ -291,7 +248,6 @@ while o < 40:
 
 
         # if the node coordinate is directly above or below the current node, its angle will be set to 90 or 270 degrees automaticlly.
-        print("minxArrayint", minxArrayint)
 
         if minxArrayint == currentNodeX:
 
@@ -349,32 +305,38 @@ while o < 40:
 
     # iterates through all 10 NODES (n)
     while n < 9:
+        # if the distance from current node to a corner of an obstacle is greater than 4, dont check it for collisions
         b = 0
         intersectCounter = 0
 
         # iterates through all 20 BLOCKS (b)
         while b < 20:
-            nodePath = [(currentNodeX, currentNodeY), (minxArray[n], minyArray[n])]
-            side1 = [(xminArray[b], yminArray[b]), (xmaxArray[b], yminArray[b])]
-            side2 = [(xminArray[b], yminArray[b]), (xminArray[b], ymaxArray[b])]
-            side3 = [(xminArray[b], ymaxArray[b]), (xmaxArray[b], ymaxArray[b])]
-            side4 = [(xmaxArray[b], ymaxArray[b]), (xmaxArray[b], yminArray[b])]
+            nodeDistance = 0
+            #distance calculation from node to edge of obstacle
+            nodeDistance = math.sqrt((xminOsbtacleArray[b] - currentNodeX)**2 + (yminObstacleArray[b] - currentNodeY)**2)
+            if nodeDistance <= 4:
+                nodePath = [(currentNodeX, currentNodeY), (minxArray[n], minyArray[n])]
+                side1 = [(xminOsbtacleArray[b], yminObstacleArray[b]), (xmaxObstacleArray[b], yminObstacleArray[b])]
+                side2 = [(xminOsbtacleArray[b], yminObstacleArray[b]), (xminOsbtacleArray[b], ymaxObstacleArray[b])]
+                side3 = [(xminOsbtacleArray[b], ymaxObstacleArray[b]), (xmaxObstacleArray[b], ymaxObstacleArray[b])]
+                side4 = [(xmaxObstacleArray[b], ymaxObstacleArray[b]), (xmaxObstacleArray[b], yminObstacleArray[b])]
 
-            # checks if any of the 4 sides intersect with each iterating node line or blockby using intersects function.
-            if intersects(nodePath, side1):
-                intersectCounter = intersectCounter + 1
+                # checks if any of the 4 sides intersect with each iterating node line or blockby using intersects function.
+                if intersects(nodePath, side1):
+                    intersectCounter = intersectCounter + 1
 
-            if intersects(nodePath, side2):
-                intersectCounter = intersectCounter + 1
+                if intersects(nodePath, side2):
+                    intersectCounter = intersectCounter + 1
 
-            if intersects(nodePath, side3):
-                intersectCounter = intersectCounter + 1
+                if intersects(nodePath, side3):
+                    intersectCounter = intersectCounter + 1
 
-            if intersects(nodePath, side4):
-                intersectCounter = intersectCounter + 1
+                if intersects(nodePath, side4):
+                    intersectCounter = intersectCounter + 1
 
 
             b = b + 1
+
 
         # If there were no intersections for a node, it will be added to an array to be analyzed further.
         if intersectCounter == 0:
@@ -398,8 +360,11 @@ while o < 40:
     checker2 = 0
 
     # check to see if node is behind start point, disqualify node if it is.
+
     for angles in angleArray2:
-        if np.logical_and(angles >= 0, angles <= 180):
+        condition1 = angles >= 0
+        condition2 = angles <= 180
+        if np.logical_and(condition1, condition2):
             finalxArray = np.append(finalxArray, minxArray4[finalBehindIterator])
             finalyArray = np.append(finalyArray, minyArray4[finalBehindIterator])
             finalAngleArray1 = np.append(finalAngleArray1, angleArray2[finalBehindIterator])
@@ -420,77 +385,147 @@ while o < 40:
     backupxArray = []
     backupyArray = []
     checker3 = 0
+    bestfinalxArray1 = []
+    bestfinalyArray1 = []
+    besttotalFinalAngleArray = []
+    backtrackIterator = 0
 
     # Angle disqualifier! This will check to see if angle between start to finish line to node is larger than 45 degrees, and do not add the node to the new array if it is.
     for angles in finalAngleArray1:
 
-        if currentNodeX < 5:
-            print("less than 5")
-            if np.logical_and(angles <= 90, angles >= 0).any():
-                #minxArray3 = finalxArray[finalAngleIterator]
-                #minyArray3 = finalyArray[finalAngleIterator]
-                finalxArray1 = np.append(finalxArray1, finalxArray[finalAngleIterator])
-                finalyArray1 = np.append(finalyArray1, finalyArray[finalAngleIterator])
-                totalFinalAngleArray = np.append(totalFinalAngleArray, finalAngleArray1[finalAngleIterator])
-                checker3 = checker3 + 1
+        condition1 = finalyArray[backtrackIterator] != pastCurrentNodeY
+        condition2 = finalxArray[backtrackIterator] != pastCurrentNodeX
+        if np.logical_or(condition1, condition2).any():
 
+            if len(pastCurrentNodeXArray)>=2:
 
-            if np.logical_and(angles >= 90, angles <= 180).any():
-                print("doodoo")
-                backupAngleArray = np.append(backupAngleArray, angles)
-                backupxArray = np.append(backupxArray, finalxArray[finalAngleIterator])
-                backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
-                # add to backup array
+                condition1 = finalyArray[backtrackIterator] != pastCurrentNodeYArray[-2]
+                condition2 = finalxArray[backtrackIterator] != pastCurrentNodeXArray[-2]
+                if np.logical_or(condition1, condition2).any():
 
-        if currentNodeX > 5:
-            print("more than 5")
-            if np.logical_and(angles >= 90, angles <= 180).any():
-                #minxArray3 = finalxArray[finalAngleIterator]
-                #minyArray3 = finalyArray[finalAngleIterator]
-                finalxArray1 = np.append(finalxArray1, finalxArray[finalAngleIterator])
-                finalyArray1 = np.append(finalyArray1, finalyArray[finalAngleIterator])
-                totalFinalAngleArray = np.append(totalFinalAngleArray, finalAngleArray1[finalAngleIterator])
-                checker3 = checker3 + 1
+                    if currentNodeX < finalNodex:
 
-            if np.logical_or(angles <= 90, angles >= 180):
-                print("doodoo2")
-                backupAngleArray = np.append(backupAngleArray, angles)
-                backupxArray = np.append(backupxArray, finalxArray[finalAngleIterator])
-                backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
-            # add to backup array
+                        condition1 = angles <= 90
+                        condition2 = angles >= 0
+                        if np.logical_and(condition1, condition2).any():
+                            #minxArray3 = finalxArray[finalAngleIterator]
+                            #minyArray3 = finalyArray[finalAngleIterator]
+                            finalxArray1 = np.append(finalxArray1, finalxArray[finalAngleIterator])
+                            finalyArray1 = np.append(finalyArray1, finalyArray[finalAngleIterator])
+                            totalFinalAngleArray = np.append(totalFinalAngleArray, finalAngleArray1[finalAngleIterator])
+                            checker3 = checker3 + 1
 
-        if currentNodeX == 5:
-            print("its five!")
-            if np.logical_and(angles >= 45, angles <= 135).any():
-                finalxArray1 = np.append(finalxArray1, finalxArray[finalAngleIterator])
-                finalyArray1 = np.append(finalyArray1, finalyArray[finalAngleIterator])
-                totalFinalAngleArray = np.append(totalFinalAngleArray, finalAngleArray1[finalAngleIterator])
-                checker3 = checker3 + 1
+                        condition1 = angles >= 90
+                        condition2 = angles <= 180
+                        if np.logical_and(condition1, condition2).any():
+                            backupAngleArray = np.append(backupAngleArray, angles)
+                            backupxArray = np.append(backupxArray, finalxArray[finalAngleIterator])
+                            backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
+                            # add to backup array
+
+                    if currentNodeX > finalNodex:
+
+                        condition1 = angles >= 90
+                        condition2 = angles <= 180
+                        if np.logical_and(condition1, condition2).any():
+                            #minxArray3 = finalxArray[finalAngleIterator]
+                            #minyArray3 = finalyArray[finalAngleIterator]
+                            finalxArray1 = np.append(finalxArray1, finalxArray[finalAngleIterator])
+                            finalyArray1 = np.append(finalyArray1, finalyArray[finalAngleIterator])
+                            totalFinalAngleArray = np.append(totalFinalAngleArray, finalAngleArray1[finalAngleIterator])
+                            checker3 = checker3 + 1
+
+                        condition1 = angles <= 90
+                        condition2 = angles >= 0
+                        if np.logical_or(condition1, condition2):
+                            backupAngleArray = np.append(backupAngleArray, angles)
+                            backupxArray = np.append(backupxArray, finalxArray[finalAngleIterator])
+                            backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
+                        # add to backup array
+
+                    if angles == 90:
+                        bestfinalxArray1 = np.append(bestfinalxArray1, finalxArray[finalAngleIterator])
+                        bestfinalyArray1 = np.append(bestfinalyArray1, finalyArray[finalAngleIterator])
+                        besttotalFinalAngleArray = np.append(besttotalFinalAngleArray, finalAngleArray1[finalAngleIterator])
+                        checker3 = checker3 + 1
+
+                    else:
+                         backupAngleArray = np.append(backupAngleArray, angles)
+                         backupxArray = np.append(backupxArray, finalxArray[finalAngleIterator])
+                         backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
 
             else:
-                 print("doodoo3")
-                 backupAngleArray = np.append(backupAngleArray, angles)
-                 backupxArray = np.append(backupxArray, finalxArray[finalAngleIterator])
-                 backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
+
+                if currentNodeX < finalNodex:
+                    condition1 = angles <= 90
+                    condition2 = angles >= 0
+                    if np.logical_and(condition1, condition2).any():
+                        #minxArray3 = finalxArray[finalAngleIterator]
+                        #minyArray3 = finalyArray[finalAngleIterator]
+                        finalxArray1 = np.append(finalxArray1, finalxArray[finalAngleIterator])
+                        finalyArray1 = np.append(finalyArray1, finalyArray[finalAngleIterator])
+                        totalFinalAngleArray = np.append(totalFinalAngleArray, finalAngleArray1[finalAngleIterator])
+                        checker3 = checker3 + 1
+
+                    condition1 = angles >= 90
+                    condition2 = angles <= 180
+                    if np.logical_and(condition1, condition2).any():
+                        backupAngleArray = np.append(backupAngleArray, angles)
+                        backupxArray = np.append(backupxArray, finalxArray[finalAngleIterator])
+                        backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
+                        # add to backup array
+
+                if currentNodeX > finalNodex:
+
+                    condition1 = angles >= 90
+                    condition2 = angles <= 180
+                    if np.logical_and(condition1, condition2).any():
+                        #minxArray3 = finalxArray[finalAngleIterator]
+                        #minyArray3 = finalyArray[finalAngleIterator]
+                        finalxArray1 = np.append(finalxArray1, finalxArray[finalAngleIterator])
+                        finalyArray1 = np.append(finalyArray1, finalyArray[finalAngleIterator])
+                        totalFinalAngleArray = np.append(totalFinalAngleArray, finalAngleArray1[finalAngleIterator])
+                        checker3 = checker3 + 1
+
+                    condition1 = angles <= 90
+                    condition2 = angles >= 0
+                    if np.logical_or(condition1, condition2):
+                        backupAngleArray = np.append(backupAngleArray, angles)
+                        backupxArray = np.append(backupxArray, finalxArray[finalAngleIterator])
+                        backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
+                    # add to backup array
+
+                if angles == 90:
+                    bestfinalxArray1 = np.append(bestfinalxArray1, finalxArray[finalAngleIterator])
+                    bestfinalyArray1 = np.append(bestfinalyArray1, finalyArray[finalAngleIterator])
+                    besttotalFinalAngleArray = np.append(besttotalFinalAngleArray, finalAngleArray1[finalAngleIterator])
+                    checker3 = checker3 + 1
+
+                else:
+                     backupAngleArray = np.append(backupAngleArray, angles)
+                     backupxArray = np.append(backupxArray, finalxArray[finalAngleIterator])
+                     backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
+
 
         finalAngleIterator = finalAngleIterator + 1
 
+        backtrackIterator = backtrackIterator + 1
+
+    backupBackupAngleArray = []
+    backupBackupfinalxArray1 = []
+    backupBackupfinalyArray1 = []
 
     # If there are no nodes left after the 'behind' disqualification (and consequential angle disqualification), the program will choose a node that is over 45 degrees / behind the current node.
-    if np.logical_and(checker2 != 0, checker3 == 0).any():
-        print("BACKUP ARRAY !!!", len(backupAngleArray))
-        totalFinalAngleArray = np.append(totalFinalAngleArray, backupAngleArray[0])
-        finalxArray1 = np.append(finalxArray1, backupxArray[0])
-        finalyArray1 = np.append(finalyArray1, backupyArray[0])
+    backupBackupAngleArray = np.append(totalFinalAngleArray, angleArray2[0])
+    backupBackupfinalxArray1 = np.append(finalxArray1, minxArray4[0])
+    backupBackupfinalyArray1 = np.append(finalyArray1, minyArray4[0])
 
-    if np.logical_and(checker2 == 0, checker3 == 0).any():
-        print("move back")
-        totalFinalAngleArray = np.append(totalFinalAngleArray, angleArray2[0])
-        finalxArray1 = np.append(finalxArray1, minxArray4[0])
-        finalyArray1 = np.append(finalyArray1, minyArray4[0])
+    print("moving straight", besttotalFinalAngleArray)
+    print("drifting", totalFinalAngleArray)
+    print("no drift", backupAngleArray)
+    print("move backwards", backupBackupAngleArray)
 
-    print("after angle", totalFinalAngleArray)
-
+#order of choosing: straight (bestfinalxArray1, besttotalFinalAngleArray), drifting (finalxArray1, totalFinalAngleArray), no drift (backupxArray, backupAngleArray), move backwards new (backupBackupfinalxArray1, backupBackupAngleArray), move backwards repeat (pastCurrentNodeX, backupAngleArray)
 
     # Define arbitrary variables for final chosen node desicion making
     finalDistanceIterator = 0
@@ -503,74 +538,58 @@ while o < 40:
     backupFinalAngleArray = []
     backupFinalxArray = []
     backupFinalyArray = []
+    choosingxArray = []
+    choosingyArray = []
+    choosingAngleArray = []
 
-    # check to see if angle between start and end point and node is smaller than 25 degrees, if it is, add it to a final qualifying array. Choose the longest (last) node in array if there are multiple qualifying nodes.
-    checker = False
-    for num2 in totalFinalAngleArray:
-        if np.logical_and(pastCurrentNodeX == finalxArray1[b], pastCurrentNodeY == finalyArray1[b]).any():
-            print("past node1")
-            backupFinalAngleArray = np.append(finalfinalArray, num2)
-            backupFinalxArray = np.append(finalfinalxArray, finalxArray1[b])
-            backupFinalyArray = np.append(finalfinalyArray, finalyArray1[b])
-        else:
-            print("normal chooser")
-            finalfinalArray = np.append(finalfinalArray, num2)
-            finalfinalxArray = np.append(finalfinalxArray, finalxArray1[b])
-            finalfinalyArray = np.append(finalfinalyArray, finalyArray1[b])
-            checker = True
-        b = b + 1
+    checker1 = False
 
-    print(checker, len(finalAngleArray1))
-    # If there are no nodes left over after all the disqualifiers, but the finalAngleArray1 (from 'behind' disqualifier) does not equal 0, the program will choose the first value of the array created after the 'behind' disqualification.
-    p = 0
-    if np.logical_and(checker == False, len(finalAngleArray1) > 0).any():
-        for nums in finalAngleArray1:
-            if np.logical_and(pastCurrentNodeX == finalxArray[p], pastCurrentNodeY == finalyArray[p]).any():
-    #            backupFinalAngleArray = np.append(finalfinalArray, angleArray2[0])
-    #            backupFinalxArray = np.append(finalfinalxArray, minxArray4[0])
-    #            backupFinalyArray = np.append(finalfinalyArray, minyArray4[0])
-    #        if np.logical_and(pastCurrentNodeX == finalxArray1[0], pastCurrentNodeY == finalyArray1[0]).any():
-                print("past node2")
-                backupFinalAngleArray = np.append(finalfinalArray, finalAngleArray1[p])
-                backupFinalxArray = np.append(finalfinalxArray, finalxArray1[p])
-                backupFinalyArray = np.append(finalfinalyArray, finalyArray1[p])
-            else:
-                print("alt chooser 1")
-                finalfinalArray = np.append(finalfinalArray, finalAngleArray1[p])
-                finalfinalxArray = np.append(finalfinalxArray, finalxArray[p])
-                finalfinalyArray = np.append(finalfinalyArray, finalyArray[p])
-                checker = True
+    if len(bestfinalxArray1) != 0:
+        choosingxArray = np.append(choosingxArray, bestfinalxArray1[-1])
+        choosingyArray = np.append(choosingyArray, bestfinalyArray1[-1])
+        choosingAngleArray = np.append(choosingAngleArray, besttotalFinalAngleArray[-1])
+        print("move straight")
+        checker1 = True
 
-#    # If there are no nodes left over after all the disqualifiers, and the finalAngleArray1 (from 'behind' disqualifier) equals 0, the program will choose the first value of the array created after the obstacle disqualification.
-    f = 0
-    if np.logical_and(checker == False, len(finalAngleArray1) == 0).any():
-        for nums in angleArray2:
-            if np.logical_and(pastCurrentNodeX == minxArray4[f], pastCurrentNodeY == minyArray4[f]).any():
-                print("past node3")
-                backupFinalAngleArray = np.append(finalfinalArray, angleArray2[f])
-                backupFinalxArray = np.append(finalfinalxArray, minxArray4[f])
-                backupFinalyArray = np.append(finalfinalyArray, minyArray4[f])
-            else:
-                print("alt chooser 2")
-                finalfinalArray = np.append(finalfinalArray, angleArray2[f])
-                finalfinalxArray = np.append(finalfinalxArray, minxArray4[f])
-                finalfinalyArray = np.append(finalfinalyArray, minyArray4[f])
-                checker = True
-            f = f + 1
+    if checker1 == False:
+        if len(finalxArray1) != 0:
+            choosingxArray = np.append(choosingxArray, finalxArray1[-1])
+            choosingyArray = np.append(choosingyArray, finalyArray1[-1])
+            choosingAngleArray = np.append(choosingAngleArray, totalFinalAngleArray[-1])
+            print("drifting")
+            checker1 = True
 
-    if checker == False:
-        finalfinalArray = np.append(finalfinalArray, backupFinalAngleArray[0])
-        finalfinalxArray = np.append(finalfinalxArray, backupFinalxArray[0])
-        finalfinalyArray = np.append(finalfinalyArray, backupFinalyArray[0])
+    if checker1 == False:
+        if len(backupxArray) != 0:
+            choosingxArray = np.append(choosingxArray, backupxArray[-1])
+            choosingyArray = np.append(choosingyArray, backupyArray[-1])
+            choosingAngleArray = np.append(choosingAngleArray, backupAngleArray[-1])
+            print("no drift")
+            checker1 = True
+
+    if checker1 == False:
+        if len(backupBackupfinalxArray1) != 0:
+            choosingxArray = np.append(choosingxArray, backupBackupfinalxArray1[-1])
+            choosingyArray = np.append(choosingyArray, backupBackupfinalyArray1[-1])
+            choosingAngleArray = np.append(choosingAngleArray, backupBackupAngleArray[-1])
+            print("move backward")
+            checker1 = True
+
+    if checker1 == False:
+        choosingxArray = np.append(choosingxArray, pastCurrentNodeX)
+        choosingyArray = np.append(choosingyArray, pastCurrentNodeY)
+        choosingAngleArray = np.append(choosingAngleArray, 270)
+        print("backtrack")
+
 
     # Choosing of the next node. The program chooses the last value of the qualifying nodes, to ensure the longest path is being chosen.
     # The previous current node will be set to the past current node and added to the past current node array.
-    print("chosen angle", finalfinalArray[-1])
-    print("chosen x", finalfinalxArray[-1])
-    print("chosen y", finalfinalyArray[-1])
+    print("CHOSEN ANGLE", choosingAngleArray[-1])
+    print("CHOSEN X", choosingxArray[-1])
+    print("CHOSEN Y", choosingyArray[-1])
 
-    xcoord = finalfinalxArray[-1]
-    ycoord = finalfinalyArray[-1]
+    xcoord = choosingxArray[-1]
+    ycoord = choosingyArray[-1]
     pastCurrentNodeX = currentNodeX
     pastCurrentNodeY = currentNodeY
     point3 = [pastCurrentNodeX, pastCurrentNodeY]
@@ -583,19 +602,20 @@ while o < 40:
     pastCurrentNodeXArray = np.append(pastCurrentNodeXArray, pastCurrentNodeX)
     pastCurrentNodeYArray = np.append(pastCurrentNodeYArray, pastCurrentNodeY)
 
+# The new current node will have a green line drawn to it from the past current node.
+    if o>1:
+        x_values4 = [pastCurrentNodeXArray[-2], pastCurrentNodeXArray[-1]]
+        y_values4 = [pastCurrentNodeYArray[-2], pastCurrentNodeYArray[-1]]
+        ax.plot(x_values4, y_values4, '#76EE00')
+    if o == 1:
+        x_values4 = [5, pastCurrentNodeX]
+        y_values4 = [0, pastCurrentNodeY]
+        ax.plot(x_values4, y_values4, '#76EE00')
+
 
     o = o + 1
     c = c + 1
 
-# The new current node will have a green line drawn to it from the past current node.
-q = 1
-while q < o:
-    point5 = [pastCurrentNodeXArray[q-1], pastCurrentNodeYArray[q-1]]
-    point6 = [pastCurrentNodeXArray[q], pastCurrentNodeYArray[q]]
-    x_values4 = [point5[0], point6[0]]
-    y_values4 = [point5[1], point6[1]]
-    ax.plot(x_values4, y_values4, '#76EE00')
-    q = q + 1
 
 # Calculates how long the program took to run from start to finish.
 print("My program took", time.time() - start_time, "to run")
@@ -603,5 +623,5 @@ print("My program took", time.time() - start_time, "to run")
 # Plotting nodes and the start and end nodes
 plt.scatter(nodex, nodey, c = colors)
 start = plt.plot(5,0,'go')
-end = plt.plot(5,10,'ro')
+end = plt.plot(finalNodex,finalNodey,'ro')
 plt.show()
