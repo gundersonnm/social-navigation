@@ -507,19 +507,19 @@ while o < 40:
 
     checker1 = False
 
-    if len(bestfinalxArray1) != 0:
-        choosingxArray = np.append(choosingxArray, bestfinalxArray1[-1])
-        choosingyArray = np.append(choosingyArray, bestfinalyArray1[-1])
-        choosingAngleArray = np.append(choosingAngleArray, besttotalFinalAngleArray[-1])
-        print("move straight")
+    if len(finalxArray1) != 0:
+        choosingxArray = np.append(choosingxArray, finalxArray1[-1])
+        choosingyArray = np.append(choosingyArray, finalyArray1[-1])
+        choosingAngleArray = np.append(choosingAngleArray, totalFinalAngleArray[-1])
+        print("drifting")
         checker1 = True
 
     if checker1 == False:
-        if len(finalxArray1) != 0:
-            choosingxArray = np.append(choosingxArray, finalxArray1[-1])
-            choosingyArray = np.append(choosingyArray, finalyArray1[-1])
-            choosingAngleArray = np.append(choosingAngleArray, totalFinalAngleArray[-1])
-            print("drifting")
+        if len(bestfinalxArray1) != 0:
+            choosingxArray = np.append(choosingxArray, bestfinalxArray1[-1])
+            choosingyArray = np.append(choosingyArray, bestfinalyArray1[-1])
+            choosingAngleArray = np.append(choosingAngleArray, besttotalFinalAngleArray[-1])
+            print("move straight")
             checker1 = True
 
     if checker1 == False:
