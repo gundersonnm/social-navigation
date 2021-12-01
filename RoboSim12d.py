@@ -15,41 +15,6 @@ start_time = time.time()
 dynamicxArray = []
 dynamicyArray = []
 
-# set animation to iterate one frame with each new node chosen (frame == o?), with each new iteration save iterating center value to obstacle arrray. navigate around that if applicable.
-
-#fig = plt.figure()
-#fig.set_dpi(100)
-#fig.set_size_inches(7, 6.5)
-
-#ax = plt.axes(xlim=(0, 10), ylim=(0, 10))
-#patch = plt.Circle((0, 0), 0.5, fc='r')
-
-#def init():
-#    patch.center = (5, 5)
-#    ax.add_patch(patch)
-#    return patch,
-
-#def animate(i):
-#    x, y = patch.center
-#    x = i
-#    y = i
-#    patch.center = (x, y)
-#    return patch,
-
-#anim = animation.FuncAnimation(fig, animate,
-#   init_func=init,
- #  frames=500,
-#   interval=200,
-#   blit=True)
-
-#i = 0
-#while i < 10:
-#    dynamicxArray = np.append(dynamicxArray, i)
-#    dynamicyArray = np.append(dynamicyArray, (i))
-#    i = i + 1
-
-#print(dynamicxArray, dynamicyArray)
-
 # Assigns RGB color values to be used in simulation
 white = (255, 255, 255)
 yellow = (255, 255, 102)
@@ -61,7 +26,7 @@ gray = (131, 139, 139)
 colors = (0,0,0)
 
 # Creation of nodes
-gridX, gridY = np.mgrid[0:11, 0:11]
+gridX, gridY = np.mgrid[0:13, 0:10.1]
 
 # Define empty arrays to hold the x and y coordinate values of each node
 nodex = []
@@ -87,8 +52,8 @@ ymaxArray = []
 # Creation of obstacles, and adding their coordinate values to xmin, ymin, xmax, and ymax Arrays. We use these values to calculate intersection points.
 fig = plt.figure()
 ax = fig.add_subplot(111, aspect='equal')
-plt.xlim([0, 10.05])
-plt.ylim([0, 10.05])
+plt.xlim([0, 11])
+plt.ylim([0, 10.5])
 n=20
 for i in range(0,n):
     x = random.uniform(0, 9)
@@ -355,6 +320,7 @@ while o < 40:
 
                 if intersects(nodePath, side4):
                     intersectCounter = intersectCounter + 1
+
 
             b = b + 1
 
