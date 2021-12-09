@@ -9,6 +9,8 @@ import time
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
+from matplotlib.animation import FuncAnimation
+import matplotlib.patches as patches
 
 start_time = time.time()
 
@@ -104,6 +106,11 @@ pastCurrentNodeX = 0
 pastCurrentNodeY = 0
 pastCurrentNodeXArray = []
 pastCurrentNodeYArray = []
+dynamicxArray = []
+dynamicyArray = []
+dynamicx1Array = []
+dynamicy1Array = []
+
 
 # Adding the initial node and final node to x and y arrays
 nodexArray = np.append(nodex, currentNodeX)
@@ -129,6 +136,8 @@ while o < 40:
     Dynamicxmax = dynamicX + 1.2
     Dynamicymax = dynamicY + 1.2
 
+    dynamicxArray = np.append(dynamicxArray, dynamicX)
+    dynamicyArray = np.append(dynamicyArray, dynamicY)
 
     # Dynamic Obstacle Values
     dynamicX1 = o
@@ -137,6 +146,9 @@ while o < 40:
     Dynamicymin1 = dynamicY1 - 0.2
     Dynamicxmax1 = dynamicX1 + 1.2
     Dynamicymax1 = dynamicY1 + 1.2
+
+    dynamicx1Array = np.append(dynamicx1Array, dynamicX1)
+    dynamicy1Array = np.append(dynamicy1Array, dynamicY1)
 
 
     #if o == 1:
@@ -254,7 +266,11 @@ while o < 40:
             y_values = [point1[1], point2[1]]
             ax.plot(x_values, y_values, '#76EE00')
             checkcheck = True
+            pastCurrentNodeXArray = np.append(pastCurrentNodeXArray, currentNodeX)
+            pastCurrentNodeYArray = np.append(pastCurrentNodeYArray, currentNodeY)
             break
+
+
         l = l + 1
 
     if checkcheck == True:
@@ -660,4 +676,51 @@ print("My program took", time.time() - start_time, "to run")
 plt.scatter(nodex, nodey, c = colors)
 start = plt.plot(5,0,'go')
 end = plt.plot(finalNodex,finalNodey,'ro')
+plt.show()
+
+
+
+fig, ax = plt.subplots()
+
+print(dynamicxArray, dynamicyArray)
+print(dynamicx1Array, dynamicy1Array)
+
+rx = []
+ry = []
+obstaclex = []
+obstacley = []
+obstaclex1 = []
+obstacley1 = []
+
+patch = patches.Rectangle((0, 0), 0, 0, fc='y')
+
+def init():
+    ax.add_patch(patch)
+    return patch,
+
+# function that draws each frame of the animation
+def animate(mom):
+    rx.append(pastCurrentNodeXArray[mom])
+    ry.append(pastCurrentNodeYArray[mom])
+    obstaclex.append(dynamicxArray[mom])
+    obstacley.append(dynamicyArray[mom])
+    obstaclex1.append(dynamicx1Array[mom])
+    obstacley1.append(dynamicy1Array[mom])
+    patch.set_width(1)
+    patch.set_height(1)
+    patch.set_xy([obstaclex[mom], obstacley[mom]])
+    print(obstaclex, obstacley, 'foiajsefaois')
+    print(mom)
+    ax.clear()
+    ax.plot(rx, ry)
+    ax.plot(obstaclex, obstacley)
+    ax.plot(obstaclex1, obstacley1)
+    ax.set_xlim([0, 11])
+    ax.set_ylim([0, 10.5])
+    return patch,
+
+
+    # run the animation
+ani = FuncAnimation(fig, animate, init_func = init, frames=20, interval=500, repeat=False)
+
 plt.show()
