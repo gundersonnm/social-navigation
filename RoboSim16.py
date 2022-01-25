@@ -114,6 +114,9 @@ dynamicxArray = []
 dynamicyArray = []
 dynamicx1Array = []
 dynamicy1Array = []
+dynamicx2Array = []
+dynamicy2Array = []
+
 
 
 # Adding the initial node and final node to x and y arrays
@@ -140,6 +143,7 @@ while o < 40:
     Dynamicxmax = dynamicX + 1.2
     Dynamicymax = dynamicY + 1.2
 
+
     dynamicxArray = np.append(dynamicxArray, dynamicX)
     dynamicyArray = np.append(dynamicyArray, dynamicY)
 
@@ -153,6 +157,17 @@ while o < 40:
 
     dynamicx1Array = np.append(dynamicx1Array, dynamicX1)
     dynamicy1Array = np.append(dynamicy1Array, dynamicY1)
+
+    # Dynamic Obstacle Values
+    dynamicX2 = o + 4
+    dynamicY2 = o
+    Dynamicxmin2 = dynamicX2 - 0.2
+    Dynamicymin2 = dynamicY2 - 0.2
+    Dynamicxmax2 = dynamicX2 + 1.2
+    Dynamicymax2 = dynamicY2 + 1.2
+
+    dynamicx2Array = np.append(dynamicx2Array, dynamicX2)
+    dynamicy2Array = np.append(dynamicy2Array, dynamicY2)
 
 
     #if o == 1:
@@ -260,30 +275,31 @@ while o < 40:
 
 
     # If the final node is in the minimumn node array established above, it will be automaticlly chosen and the all encapsuling node will be broken.
-#    l = 0
-#    checkcheck = False
-#    for kk in minxArray:
-#        if np.logical_and(kk == finalNodex, minyArray[l] == finalNodey).any():
-#            point1 = [currentNodeX, currentNodeY]
-#            point2 = [finalNodex, finalNodey]
-#            x_values = [point1[0], point2[0]]
-#            y_values = [point1[1], point2[1]]
-#            ax.plot(x_values, y_values, '#76EE00')
-#            checkcheck = True
-#            pastCurrentNodeXArray = np.append(pastCurrentNodeXArray, pastCurrentNodeX)
-#            pastCurrentNodeXArray = np.append(pastCurrentNodeXArray, 5)
-#            print(pastCurrentNodeXArray, 'at the end lkakjsfdpoiiwej')
-#            pastCurrentNodeYArray = np.append(pastCurrentNodeYArray, pastCurrentNodeY)
-#            pastCurrentNodeYArray = np.append(pastCurrentNodeYArray, 10)
-#            o = o + 1
-#            print(o, 'before whattttt')
-#            break
+    l = 0
+    checkcheck = False
+    for kk in minxArray:
+        if np.logical_and(kk == finalNodex, minyArray[l] == finalNodey).any():
+            point1 = [currentNodeX, currentNodeY]
+            point2 = [finalNodex, finalNodey]
+            x_values = [point1[0], point2[0]]
+            y_values = [point1[1], point2[1]]
+            ax.plot(x_values, y_values, '#76EE00')
+            checkcheck = True
+            pastCurrentNodeXArray = np.append(pastCurrentNodeXArray, x_values)
+            pastCurrentNodeXArray = np.append(pastCurrentNodeXArray, 5)
+            pastCurrentNodeYArray = np.append(pastCurrentNodeYArray, y_values)
+            pastCurrentNodeYArray = np.append(pastCurrentNodeYArray, 10)
+            print(pastCurrentNodeXArray, 'at the end lkakjsfdpoiiwej')
+            print(pastCurrentNodeYArray, 'at the end lkakjsfdpoiiwej')
+            o = o + 1
+            print(o, 'before whattttt')
+            break
 
 
-#        l = l + 1
+        l = l + 1
 
-#    if checkcheck == True:
-#        break
+    if checkcheck == True:
+        break
 
     # Define arbitrary variable values for the drawing of blue lines and calculating of angle values.
     r = 0
@@ -472,18 +488,25 @@ while o < 40:
     bestfinalyArray1 = []
     besttotalFinalAngleArray = []
     backtrackIterator = 0
+    superCloseArray = []
+    superCloseXArray = []
+    superCloseYArray = []
 
     # Angle disqualifier! This will check to see if angle between start to finish line to node is larger than 45 degrees, and do not add the node to the new array if it is.
     for angles in finalAngleArray1:
 
+        # if we're not choosing any past nodes
         if np.logical_or(finalyArray[backtrackIterator] != pastCurrentNodeY, finalxArray[backtrackIterator] != pastCurrentNodeX).any():
 
+            # if we have moved more than 2 nodes forward
             if len(pastCurrentNodeXArray)>=2:
 
+                # if we arent choosing a past node x2
                 if np.logical_or(finalyArray[backtrackIterator] != pastCurrentNodeYArray[-2], finalxArray[backtrackIterator] != pastCurrentNodeXArray[-2]).any():
 
+                    # if we're to the left of the final node, trying to move right
                     if currentNodeX < finalNodex:
-                        if np.logical_and(angles <= 90, angles >= 0).any():
+                        if np.logical_and(angles < 90, angles > 0).any():
                             #minxArray3 = finalxArray[finalAngleIterator]
                             #minyArray3 = finalyArray[finalAngleIterator]
                             finalxArray1 = np.append(finalxArray1, finalxArray[finalAngleIterator])
@@ -498,8 +521,19 @@ while o < 40:
                             backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
                             # add to backup array
 
+                        if angles == 0:
+                            #minxArray3 = finalxArray[finalAngleIterator]
+                            #minyArray3 = finalyArray[finalAngleIterator]
+                            superCloseXArray = np.append(superCloseXArray, finalxArray[finalAngleIterator])
+                            superCloseYArray = np.append(superCloseYArray, finalyArray[finalAngleIterator])
+                            totalFinalAngleArray = np.append(superCloseArray, finalAngleArray1[finalAngleIterator])
+                            checker3 = checker3 + 1
+                            print("T H I S H A P P E N E D   MOVE RIGHT")
+
+
+                    # if we're to the right of the final node
                     if currentNodeX > finalNodex:
-                        if np.logical_and(angles >= 90, angles <= 180).any():
+                        if np.logical_and(angles > 90, angles < 180).any():
                             #minxArray3 = finalxArray[finalAngleIterator]
                             #minyArray3 = finalyArray[finalAngleIterator]
                             finalxArray1 = np.append(finalxArray1, finalxArray[finalAngleIterator])
@@ -513,6 +547,14 @@ while o < 40:
                             backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
                         # add to backup array
 
+                        if angles == 180:
+                            superCloseXArray = np.append(superCloseXArray, finalxArray[finalAngleIterator])
+                            superCloseYArray = np.append(superCloseYArray, finalyArray[finalAngleIterator])
+                            totalFinalAngleArray = np.append(superCloseArray, finalAngleArray1[finalAngleIterator])
+                            checker3 = checker3 + 1
+                            print("T H I S H A P P E N E D   MOVE LEFT")
+
+                    # if we're straight on with the node
                     if angles == 90:
                         bestfinalxArray1 = np.append(bestfinalxArray1, finalxArray[finalAngleIterator])
                         bestfinalyArray1 = np.append(bestfinalyArray1, finalyArray[finalAngleIterator])
@@ -524,6 +566,7 @@ while o < 40:
                          backupxArray = np.append(backupxArray, finalxArray[finalAngleIterator])
                          backupyArray = np.append(backupyArray, finalyArray[finalAngleIterator])
 
+            # if we are choosing past nodes
             else:
 
                 if currentNodeX < finalNodex:
@@ -633,6 +676,14 @@ while o < 40:
                 choosingAngleArray = np.append(choosingAngleArray, besttotalFinalAngleArray[-1])
                 print("move straight")
                 checker1 = True
+    if currentNodeY == finalNodey:
+        if len(superCloseArray) != 0:
+            if checker1 == False:
+                choosingxArray = np.append(choosingxArray, superCloseXArray[-1])
+                choosingyArray = np.append(choosingyArray, superCloseYArray[-1])
+                choosingAngleArray = np.append(choosingAngleArray, superCloseArray[-1])
+                print("move horizontal")
+                checker1 = True
     if checker1 == False:
         if len(backupxArray) != 0:
             choosingxArray = np.append(choosingxArray, backupxArray[-1])
@@ -700,15 +751,21 @@ plt.show()
 
 fig, ax = plt.subplots()
 
-pastCurrentNodeXArray = np.append(pastCurrentNodeXArray, 5)
-pastCurrentNodeYArray = np.append(pastCurrentNodeYArray, 10)
-
 rx = []
 ry = []
 obstaclex = []
 obstacley = []
 obstaclex1 = []
 obstacley1 = []
+obstaclex2 = []
+obstacley2 = []
+
+dynamicxArray = np.append(dynamicxArray, np.linspace(17, 17+2, o+1))
+dynamicyArray = np.append(dynamicyArray, np.linspace(17, 17+2, o+1))
+dynamicx1Array = np.append(dynamicx1Array, np.linspace(17, 17+2, o+1))
+dynamicy1Array = np.append(dynamicy1Array, np.linspace(17, 17+2, o+1))
+dynamicx2Array = np.append(dynamicx2Array, np.linspace(17, 17+2, o+1))
+dynamicy2Array = np.append(dynamicy2Array, np.linspace(17, 17+2, o+1))
 
 patch = patches.Rectangle((0, 0), 0, 0, fc='y')
 
@@ -724,12 +781,15 @@ def animate(mom):
     obstacley.append(dynamicyArray[mom])
     obstaclex1.append(dynamicx1Array[mom])
     obstacley1.append(dynamicy1Array[mom])
+    obstaclex2.append(dynamicx2Array[mom])
+    obstacley2.append(dynamicy2Array[mom])
     patch.set_width(1)
     patch.set_height(1)
     patch.set_xy([obstaclex[mom], obstacley[mom]])
     print(mom)
     ax.clear()
     ax.plot(rx, ry)
+    ax.plot(rx[-1], ry[-1])
 #    ax.plot(obstaclex, obstacley)
 #    ax.plot(obstaclex1, obstacley1)
     ax.scatter(nodex, nodey, c = colors)
@@ -747,10 +807,14 @@ def animate(mom):
         y = obstacley[mom]
         x1 = obstaclex1[mom]
         y1 = obstacley1[mom]
+        x2 = obstaclex2[mom]
+        y2 = obstacley2[mom]
         ax.add_patch(matplotlib.patches.Rectangle((x-0.1, y-0.1),1,1, facecolor='#35AC43'))
         ax.add_patch(matplotlib.patches.Rectangle((x, y),0.8,0.8, facecolor='#76EE00'))
         ax.add_patch(matplotlib.patches.Rectangle((x1-0.1, y1-0.1),1,1, facecolor='#35AC43'))
         ax.add_patch(matplotlib.patches.Rectangle((x1, y1),0.8,0.8, facecolor='#76EE00'))
+        ax.add_patch(matplotlib.patches.Rectangle((x2-0.1, y2-0.1),1,1, facecolor='#35AC43'))
+        ax.add_patch(matplotlib.patches.Rectangle((x2, y2),0.8,0.8, facecolor='#76EE00'))
 
     ax.set_xlim([0, 11])
     ax.set_ylim([0, 10.5])
