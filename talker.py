@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+                                              #!/usr/bin/env python
 import rospy
 
 import math
@@ -15,18 +15,63 @@ from matplotlib import animation
 from matplotlib.animation import FuncAnimation
 import matplotlib.patches as patches
 
+from geometry_msgs.msg import Twist, Vector3, PoseStamped, Pose
 from std_msgs.msg import String
+from std_msgs.msg import Header
+
+import rospy
+from nav_msgs.msg import *
+#from nav_msgs.msg import OccupancyGrid
+map_storage = [OccupancyGrid()]
+#subscriber = rospy.Subscriber(nav_msgs.msg.OccupancyGrid, "/map", sub_map_cb, queue_size = 10 )
+
+def sub_map_cb(data):
+    #map_storage.append(data)
+    width_temp = data.info.width
+    height_temp = data.info.height
+    print(width_temp, 'width')
+    print(height_temp, 'height')
+    array_temp = np.array(data.data)
+    array_temp = np.reshape(array_temp, (height_temp, width_temp))
+    print(array_temp)
+    print(array_temp.shape)
 
 def talker():
     pub = rospy.Publisher('chatter', String, queue_size=10)
-    rospy.init_node('talker', anonymous=True)
+    sub = rospy.Subscriber("map", OccupancyGrid, sub_map_cb)
+    #global dad
+    #n = 100
+    #p_occ = 0.5
+    #odds_ratios = p_occ / (1 - p_occ) * np.ones((n, n))
+    #data = []
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
+        #print(map_storage)
+        width_array = map_storage[-1].info.width
+        #print(width_array, 'ldfjakskjjdf')
+        #dad = map_storage[-1].header.seq
 
+        #print(dad, 'aiewng;ai')
+        # to save time, only publish the map every 10 scans that we process
+        #if dad % 10 == 0:
+        #    print('iuawu;an')
+        #    # make occupancy grid
+        #    data = [0] * n ** 2  # map.data stores the n by n grid in row-major order
+        #    for i in range(n):
+        #        for j in range(n):
+        #            idx = i + n * j  # this implements row major order
+        #            if odds_ratios[i, j] < 1 / 5.0:  # consider a cell free if odds ratio is low enough
+        #                data[idx] = 0
+        #            elif odds_ratios[i, j] > 5.0:  # consider a cell occupied if odds ratio is high enough
+        #                data[idx] = 100
+        #            else:  # otherwise cell is unknown
+        #                data[idx] = -1
+            #pub.publish(map)
+            #print(map, 'aiejaowiejg;angd')
 
+        #    print(data, 'iaew;i')
 
         start_time = time.time()
-
 
         # Assigns RGB color values to be used in simulation
         white = (255, 255, 255)
@@ -108,7 +153,6 @@ def talker():
             xmaxArray = np.append(xmaxArray, xmax)
             ymaxArray = np.append(ymaxArray, ymax)
 
-        print(x_obs1, 'OBSTACLESSSSS')
         # Define arbitrary iterators and empty arrays to hold the values of the 10 closest nodes to the CurrentNode
         nodeDistArray = []
         nodexArray = []
@@ -215,13 +259,8 @@ def talker():
             xmaxArray = np.append(xmaxArray, Dynamicxmax1)
             ymaxArray = np.append(ymaxArray, Dynamicymax1)
 
-            print(dynamicX, dynamicY, "DYNAMIC X Y COORDINATES")
-            print(dynamicX1, dynamicY1, "DYNAMIC1 X1 Y1 COORDINATES1")
-            print(xminArray, yminArray, "XMINARRAY YMINARRAY")
-
             # This checks if the path planner has reached the final node, and if it has, breaks the all encapsuling loop.
             if np.logical_and(currentNodeX == finalNodex, currentNodeY == finalNodey).any():
-                print("its there!")
                 check1 = True
 
             if check1 == True:
@@ -302,10 +341,7 @@ def talker():
                     pastCurrentNodeXArray = np.append(pastCurrentNodeXArray, 5)
                     pastCurrentNodeYArray = np.append(pastCurrentNodeYArray, y_values)
                     pastCurrentNodeYArray = np.append(pastCurrentNodeYArray, 10)
-                    print(pastCurrentNodeXArray, 'at the end lkakjsfdpoiiwej')
-                    print(pastCurrentNodeYArray, 'at the end lkakjsfdpoiiwej')
                     o = o + 1
-                    print(o, 'before whattttt')
                     break
 
 
@@ -392,13 +428,6 @@ def talker():
 
                 r = r + 1
 
-
-            print("all angles", angleArray)
-            print("all x values", minxArray)
-            print("all y values", minyArray)
-
-
-
             # Obstacle disqualifier! The obstacle disqualifier works by checking if each node line intersects with any side of the square obstacles. If there is any intersection  detected, the node will be disqualified.
             def intersects(s0,s1):
                 # Sets the sides of the obstacle equal to dx0, dx1... and checks if they intersect with any node lines.
@@ -461,8 +490,6 @@ def talker():
 
                 n = n + 1
 
-            print("after obstacle", angleArray2)
-
             # Initializing iterators and arrays for checking if there are any nodes behind the current node
             finalBehindIterator = 0
             j = 0
@@ -483,8 +510,6 @@ def talker():
                     checker2 = checker2 + 1
                 finalBehindIterator = finalBehindIterator + 1
                 # continue
-
-            print("after behind", finalAngleArray1)
 
             # define arbitrary variables for angle disqualification
             finalAngleIterator = 0
@@ -541,8 +566,6 @@ def talker():
                                     superCloseYArray = np.append(superCloseYArray, finalyArray[finalAngleIterator])
                                     totalFinalAngleArray = np.append(superCloseArray, finalAngleArray1[finalAngleIterator])
                                     checker3 = checker3 + 1
-                                    print("T H I S H A P P E N E D   MOVE RIGHT")
-
 
                             # if we're to the right of the final node
                             if currentNodeX > finalNodex:
@@ -565,7 +588,6 @@ def talker():
                                     superCloseYArray = np.append(superCloseYArray, finalyArray[finalAngleIterator])
                                     totalFinalAngleArray = np.append(superCloseArray, finalAngleArray1[finalAngleIterator])
                                     checker3 = checker3 + 1
-                                    print("T H I S H A P P E N E D   MOVE LEFT")
 
                             # if we're straight on with the node
                             if angles == 90:
@@ -638,11 +660,6 @@ def talker():
             backupBackupfinalxArray1 = np.append(finalxArray1, minxArray4[0])
             backupBackupfinalyArray1 = np.append(finalyArray1, minyArray4[0])
 
-            print("besttotalFinalAngleArray", besttotalFinalAngleArray)
-            print("totalFinalAngleArray", totalFinalAngleArray)
-            print("backupAngleArray", backupAngleArray)
-            print("backupBackupAngleArray", backupBackupAngleArray)
-
         #order of choosing: straight (bestfinalxArray1, besttotalFinalAngleArray), drifting (finalxArray1, totalFinalAngleArray), no drift (backupxArray, backupAngleArray), move backwards new (backupBackupfinalxArray1, backupBackupAngleArray), move backwards repeat (pastCurrentNodeX, backupAngleArray)
 
             # Define arbitrary variables for final chosen node desicion making
@@ -666,28 +683,24 @@ def talker():
                     choosingxArray = np.append(choosingxArray, bestfinalxArray1[-1])
                     choosingyArray = np.append(choosingyArray, bestfinalyArray1[-1])
                     choosingAngleArray = np.append(choosingAngleArray, besttotalFinalAngleArray[-1])
-                    print("move straight")
                     checker1 = True
                 if checker1 == False:
                     if len(finalxArray1) != 0:
                         choosingxArray = np.append(choosingxArray, finalxArray1[-1])
                         choosingyArray = np.append(choosingyArray, finalyArray1[-1])
                         choosingAngleArray = np.append(choosingAngleArray, totalFinalAngleArray[-1])
-                        print("drifting")
                         checker1 = True
             if currentNodeY > 5:
                 if len(finalxArray1) != 0:
                     choosingxArray = np.append(choosingxArray, finalxArray1[-1])
                     choosingyArray = np.append(choosingyArray, finalyArray1[-1])
                     choosingAngleArray = np.append(choosingAngleArray, totalFinalAngleArray[-1])
-                    print("drifting")
                     checker1 = True
                 if checker1 == False:
                     if len(bestfinalxArray1) != 0:
                         choosingxArray = np.append(choosingxArray, bestfinalxArray1[-1])
                         choosingyArray = np.append(choosingyArray, bestfinalyArray1[-1])
                         choosingAngleArray = np.append(choosingAngleArray, besttotalFinalAngleArray[-1])
-                        print("move straight")
                         checker1 = True
             if currentNodeY == finalNodey:
                 if len(superCloseArray) != 0:
@@ -695,33 +708,26 @@ def talker():
                         choosingxArray = np.append(choosingxArray, superCloseXArray[-1])
                         choosingyArray = np.append(choosingyArray, superCloseYArray[-1])
                         choosingAngleArray = np.append(choosingAngleArray, superCloseArray[-1])
-                        print("move horizontal")
                         checker1 = True
             if checker1 == False:
                 if len(backupxArray) != 0:
                     choosingxArray = np.append(choosingxArray, backupxArray[-1])
                     choosingyArray = np.append(choosingyArray, backupyArray[-1])
                     choosingAngleArray = np.append(choosingAngleArray, backupAngleArray[-1])
-                    print("no drift")
                     checker1 = True
             if checker1 == False:
                 if len(backupBackupfinalxArray1) != 0:
                     choosingxArray = np.append(choosingxArray, backupBackupfinalxArray1[-1])
                     choosingyArray = np.append(choosingyArray, backupBackupfinalyArray1[-1])
                     choosingAngleArray = np.append(choosingAngleArray, backupBackupAngleArray[-1])
-                    print("move backward")
                     checker1 = True
             if checker1 == False:
                 choosingxArray = np.append(choosingxArray, pastCurrentNodeX)
                 choosingyArray = np.append(choosingyArray, pastCurrentNodeY)
                 choosingAngleArray = np.append(choosingAngleArray, 270)
-                print("backtrack")
 
             # Choosing of the next node. The program chooses the last value of the qualifying nodes, to ensure the longest path is being chosen.
             # The previous current node will be set to the past current node and added to the past current node array.
-            print("CHOSEN ANGLE", choosingAngleArray[-1])
-            print("CHOSEN X", choosingxArray[-1])
-            print("CHOSEN Y", choosingyArray[-1])
 
             xcoord = choosingxArray[-1]
             ycoord = choosingyArray[-1]
@@ -839,7 +845,7 @@ def talker():
         #ani.save('myAnimation.gif', writer='imagemagick', fps=1)
 
         plt.show()
-        
+
         hello_str = "hello world %s" % rospy.get_time()
         rospy.loginfo(hello_str)
         pub.publish(hello_str)
@@ -847,6 +853,8 @@ def talker():
 
 if __name__ == '__main__':
     try:
+        rospy.init_node('talker', anonymous=True)
         talker()
+        loop()
     except rospy.ROSInterruptException:
         pass
